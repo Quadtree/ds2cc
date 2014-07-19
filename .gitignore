@@ -1,7 +1,7 @@
 /build
 /classes
 *.jar
-*.classes
+*.class
 *~
 */web-app/gwt
 */web-app/WEB-INF/classes
@@ -9,3 +9,6 @@ target
 .gwt
 gwt-unitCache
 www-test
+/war/ds2cc
+/war/tsvimporter
+/war/WEB-INF/deploy
