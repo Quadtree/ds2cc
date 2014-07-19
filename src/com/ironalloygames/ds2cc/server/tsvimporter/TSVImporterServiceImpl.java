@@ -14,7 +14,6 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ironalloygames.ds2cc.client.tsvimporter.TSVImporterService;
 import com.ironalloygames.ds2cc.shared.data.Item;
-import com.ironalloygames.ds2cc.shared.data.ResistanceType;
 import com.ironalloygames.ds2cc.shared.data.Slot;
 import com.ironalloygames.ds2cc.shared.data.Stat;
 import com.ironalloygames.ds2cc.shared.tsvuploader.UploadType;
@@ -97,19 +96,23 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 						ar.setName(columns[columnNames.get("Name")]);
 					}
 
-					ar.setResistance(ResistanceType.PHYSICAL, Float.parseFloat(columns[columnNames.get("Phys")]));
-					ar.setResistance(ResistanceType.STRIKE, Float.parseFloat(columns[columnNames.get("Str")]));
-					ar.setResistance(ResistanceType.SLASH, Float.parseFloat(columns[columnNames.get("Sls")]));
-					ar.setResistance(ResistanceType.THRUST, Float.parseFloat(columns[columnNames.get("Thr")]));
-					ar.setResistance(ResistanceType.MAGIC, Float.parseFloat(columns[columnNames.get("Mag")]));
-					ar.setResistance(ResistanceType.FIRE, Float.parseFloat(columns[columnNames.get("Fire")]));
-					ar.setResistance(ResistanceType.LIGHTNING, Float.parseFloat(columns[columnNames.get("Light")]));
-					ar.setResistance(ResistanceType.DARK, Float.parseFloat(columns[columnNames.get("Dark")]));
-					ar.setResistance(ResistanceType.POISE, Float.parseFloat(columns[columnNames.get("Poise")]));
-					ar.setResistance(ResistanceType.POISON, Float.parseFloat(columns[columnNames.get("Poison")]));
-					ar.setResistance(ResistanceType.BLEED, Float.parseFloat(columns[columnNames.get("Bleed")]));
-					ar.setResistance(ResistanceType.PETRIFY, Float.parseFloat(columns[columnNames.get("Petrify")]));
-					ar.setResistance(ResistanceType.CURSE, Float.parseFloat(columns[columnNames.get("Curse")]));
+					// if it has one compatibility column, assume that it has
+					// them all
+					if (columnNames.containsKey("Phys")) {
+						ar.setStatModifier(Stat.PHYSICAL_RESISTANCE, Float.parseFloat(columns[columnNames.get("Phys")]));
+						ar.setStatModifier(Stat.STRIKE_RESISTANCE, Float.parseFloat(columns[columnNames.get("Str")]));
+						ar.setStatModifier(Stat.SLASH_RESISTANCE, Float.parseFloat(columns[columnNames.get("Sls")]));
+						ar.setStatModifier(Stat.THRUST_RESISTANCE, Float.parseFloat(columns[columnNames.get("Thr")]));
+						ar.setStatModifier(Stat.MAGIC_RESISTANCE, Float.parseFloat(columns[columnNames.get("Mag")]));
+						ar.setStatModifier(Stat.FIRE_RESISTANCE, Float.parseFloat(columns[columnNames.get("Fire")]));
+						ar.setStatModifier(Stat.LIGHTNING_RESISTANCE, Float.parseFloat(columns[columnNames.get("Light")]));
+						ar.setStatModifier(Stat.DARK_RESISTANCE, Float.parseFloat(columns[columnNames.get("Dark")]));
+						ar.setStatModifier(Stat.POISE_RESISTANCE, Float.parseFloat(columns[columnNames.get("Poise")]));
+						ar.setStatModifier(Stat.POISON_RESISTANCE, Float.parseFloat(columns[columnNames.get("Poison")]));
+						ar.setStatModifier(Stat.BLEED_RESISTANCE, Float.parseFloat(columns[columnNames.get("Bleed")]));
+						ar.setStatModifier(Stat.PETRIFY_RESISTANCE, Float.parseFloat(columns[columnNames.get("Petrify")]));
+						ar.setStatModifier(Stat.CURSE_RESISTANCE, Float.parseFloat(columns[columnNames.get("Curse")]));
+					}
 
 					ar.setDurability(Integer.parseInt(columns[columnNames.get("Dur")]));
 					ar.setWeight(Float.parseFloat(columns[columnNames.get("Weight")]));
@@ -137,13 +140,13 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 
 					MatchResult mr = null;
 
-					if (columns.length > columnNames.get("Prerequisite")) {
+					if (columnNames.containsKey("Effect") && columns.length > columnNames.get("Prerequisite")) {
 						while ((mr = prereqFinder.exec(columns[columnNames.get("Prerequisite")])) != null) {
 							ar.setStatRequirement(statNames.get(mr.getGroup(2)), Integer.parseInt(mr.getGroup(1)));
 						}
 					}
 
-					if (columns.length > columnNames.get("Effect")) {
+					if (columnNames.containsKey("Effect") && columns.length > columnNames.get("Effect")) {
 						while ((mr = compoundBonusFinder.exec(columns[columnNames.get("Effect")])) != null) {
 							ar.setStatModifier(statNames.get(mr.getGroup(1)), Integer.parseInt(mr.getGroup(3)));
 							ar.setStatModifier(statNames.get(mr.getGroup(2)), Integer.parseInt(mr.getGroup(3)));
@@ -163,6 +166,19 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 							// getLogger().info("BONUS FOUND " + mr.getGroup(1)
 							// + " " + mr.getGroup(2));
 						}
+					}
+
+					// check for our own column names...
+					for(Stat s : Stat.values())
+					{
+						if (columnNames.containsKey("+" + s))
+							ar.setStatModifier(s, Float.parseFloat(columns[columnNames.get("+" + s)]));
+
+						if (columnNames.containsKey("*" + s))
+							ar.setStatMultiplier(s, Float.parseFloat(columns[columnNames.get("*" + s)]));
+
+						if (columnNames.containsKey(">" + s))
+							ar.setStatRequirement(s, Float.parseFloat(columns[columnNames.get(">" + s)]));
 					}
 
 					pm.makePersistent(ar);
@@ -200,51 +216,37 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 
 		StringBuilder ret = new StringBuilder();
 
-		ret.append("Name	Phys	Str	Sls	Thr	Mag	Fire	Light	Dark	Poise	Poison	Bleed	Petrify	Curse	Dur	Weight	Prerequisite	Effect\n");
+		// ret.append("Name	Phys	Str	Sls	Thr	Mag	Fire	Light	Dark	Poise	Poison	Bleed	Petrify	Curse	Dur	Weight	Prerequisite	Effect\n");
+
+		ret.append("Name\tDur\tWeight\tSlot");
+
+		for (Stat s : Stat.values()) {
+			ret.append("\t+" + s);
+			ret.append("\t*" + s);
+			ret.append("\t>" + s);
+		}
+
+		ret.append("\n");
 
 		for (Item itm : (List<Item>) q.execute()) {
 
-			StringBuilder prereq = new StringBuilder();
+			ret.append(itm.getName());
+			ret.append("\t");
+			ret.append(itm.getDurability());
+			ret.append("\t");
+			ret.append(itm.getWeight());
+			ret.append("\t");
+			ret.append(itm.getSlot());
 
-			for(Stat stat : Stat.values()){
-				if (itm.getStatRequirement(stat) > 0){
-					prereq.append(" " + itm.getStatRequirement(stat) + " " + stat.getAbbrev());
-				}
+			for (Stat s : Stat.values()) {
+				ret.append("\t");
+				ret.append(itm.getStatModifier(s));
+				ret.append("\t");
+				ret.append(itm.getStatMultiplier(s));
+				ret.append("\t");
+				ret.append(itm.getStatRequirement(s));
 			}
 
-			StringBuilder effect = new StringBuilder();
-
-			for (Stat stat : Stat.values())
-			{
-				if (itm.getStatModifier(stat) > 0) {
-					effect.append(" " + stat.getAbbrev() + "+" + itm.getStatModifier(stat));
-				}
-			}
-
-			String[] elements = {
-					itm.getName(),
-					"" + itm.getResistance(ResistanceType.PHYSICAL),
-					"" + itm.getResistance(ResistanceType.STRIKE),
-					"" + itm.getResistance(ResistanceType.SLASH),
-					"" + itm.getResistance(ResistanceType.THRUST),
-					"" + itm.getResistance(ResistanceType.MAGIC),
-					"" + itm.getResistance(ResistanceType.FIRE),
-					"" + itm.getResistance(ResistanceType.LIGHTNING),
-					"" + itm.getResistance(ResistanceType.DARK),
-					"" + itm.getResistance(ResistanceType.POISE),
-					"" + itm.getResistance(ResistanceType.POISON),
-					"" + itm.getResistance(ResistanceType.BLEED),
-					"" + itm.getResistance(ResistanceType.PETRIFY),
-					"" + itm.getResistance(ResistanceType.CURSE),
-					"" + itm.getDurability(),
-					"" + itm.getWeight(),
-					"" + prereq.toString(),
-					"" + effect.toString()
-			};
-
-			for (String s : elements) {
-				ret.append(s + "\t");
-			}
 			ret.append("\n");
 		}
 

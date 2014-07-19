@@ -34,58 +34,76 @@ public class Item implements IsSerializable {
 	 * Absolute modifiers to stats
 	 */
 	@Persistent(serialized = "true")
-	Map<Stat, Integer> statModifiers = new EnumMap<>(Stat.class);
+	Map<Stat, Float> statModifiers = new EnumMap<>(Stat.class);
+
+	/**
+	 * Percentage modifiers to stats
+	 */
+	@Persistent(serialized = "true")
+	Map<Stat, Float> statMultipliers = new EnumMap<>(Stat.class);
 
 	/**
 	 * Minimum stats to use this item. Some items can be used below these
 	 * minimums, but the item will be less uesful
 	 */
 	@Persistent(serialized = "true")
-	Map<Stat, Integer> statRequirements = new EnumMap<>(Stat.class);
+	Map<Stat, Float> statRequirements = new EnumMap<>(Stat.class);
 
-	/**
-	 * s Bonus resistances when this item is equipped
-	 */
-	@Persistent(serialized = "true")
-	Map<ResistanceType, Float> resistanceBonus = new EnumMap<>(ResistanceType.class);
-
-	public float getResistance(ResistanceType type)
+	public float getStatRequirement(Stat stat)
 	{
-		if (resistanceBonus.containsKey(type))
-			return resistanceBonus.get(type);
-		else
-			return 0;
-	}
+		if (statRequirements == null)
+			statRequirements = new EnumMap<>(Stat.class);
 
-	public void setResistance(ResistanceType type, float amount)
-	{
-		resistanceBonus.put(type, amount);
-	}
-
-	public int getStatRequirement(Stat stat)
-	{
 		if (statRequirements.containsKey(stat))
 			return statRequirements.get(stat);
 		else
 			return 0;
 	}
 
-	public void setStatRequirement(Stat stat, int amount)
+	public void setStatRequirement(Stat stat, float amount)
 	{
+		if (statRequirements == null)
+			statRequirements = new EnumMap<>(Stat.class);
+
 		statRequirements.put(stat, amount);
 	}
 
-	public int getStatModifier(Stat stat)
+	public float getStatModifier(Stat stat)
 	{
+		if (statModifiers == null)
+			statModifiers = new EnumMap<>(Stat.class);
+
 		if (statModifiers.containsKey(stat))
 			return statModifiers.get(stat);
 		else
 			return 0;
 	}
 
-	public void setStatModifier(Stat stat, int amount)
+	public void setStatModifier(Stat stat, float amount)
 	{
+		if (statModifiers == null)
+			statModifiers = new EnumMap<>(Stat.class);
+
 		statModifiers.put(stat, amount);
+	}
+
+	public float getStatMultiplier(Stat stat)
+	{
+		if (statMultipliers == null)
+			statMultipliers = new EnumMap<>(Stat.class);
+
+		if (statMultipliers.containsKey(stat))
+			return statMultipliers.get(stat);
+		else
+			return 0;
+	}
+
+	public void setStatMultiplier(Stat stat, float amount)
+	{
+		if (statMultipliers == null)
+			statMultipliers = new EnumMap<>(Stat.class);
+
+		statMultipliers.put(stat, amount);
 	}
 
 	/**

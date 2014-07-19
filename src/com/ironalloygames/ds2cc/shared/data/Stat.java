@@ -9,7 +9,20 @@ public enum Stat {
 	DEXTERITY("DEX"),
 	ADAPTABILITY("ADP"),
 	INTELLIGENCE("INT"),
-	FAITH("FTH");
+	FAITH("FTH"),
+	PHYSICAL_RESISTANCE,
+	STRIKE_RESISTANCE,
+	SLASH_RESISTANCE,
+	THRUST_RESISTANCE,
+	MAGIC_RESISTANCE,
+	FIRE_RESISTANCE,
+	LIGHTNING_RESISTANCE,
+	DARK_RESISTANCE,
+	POISE_RESISTANCE,
+	POISON_RESISTANCE,
+	BLEED_RESISTANCE,
+	PETRIFY_RESISTANCE,
+	CURSE_RESISTANCE;
 
 	String abbrev;
 
@@ -19,6 +32,10 @@ public enum Stat {
 
 	private Stat(String abbrev) {
 		this.abbrev = abbrev;
+	}
+
+	private Stat() {
+		this.abbrev = null;
 	}
 
 }
