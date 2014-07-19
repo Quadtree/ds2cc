@@ -3,10 +3,13 @@ package com.ironalloygames.ds2cc.server.tsvimporter;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ironalloygames.ds2cc.client.tsvimporter.TSVImporterService;
 import com.ironalloygames.ds2cc.shared.data.Armor;
 import com.ironalloygames.ds2cc.shared.data.Armor.ResistanceType;
+import com.ironalloygames.ds2cc.shared.data.Armor.Stat;
 import com.ironalloygames.ds2cc.shared.tsvuploader.UploadType;
 
 public class TSVImporterServiceImpl extends RemoteServiceServlet implements
@@ -40,6 +43,13 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 
 			getLogger().info("Column names: " + columnNames);
 
+			HashMap<String, Stat> statNames = new HashMap<>();
+			statNames.put("STR", Stat.STRENGTH);
+			statNames.put("DEX", Stat.DEXTERITY);
+			statNames.put("INT", Stat.INTELLIGENCE);
+			statNames.put("FTH", Stat.FAITH);
+
+			RegExp prereqFinder = RegExp.compile("(\\d+) ([A-Z]{3})", "g");
 
 			for (String line : lines)
 			{
@@ -63,6 +73,17 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 					ar.setResistance(ResistanceType.BLEED, Float.parseFloat(columns[columnNames.get("Bleed")]));
 					ar.setResistance(ResistanceType.PETRIFY, Float.parseFloat(columns[columnNames.get("Petrify")]));
 					ar.setResistance(ResistanceType.CURSE, Float.parseFloat(columns[columnNames.get("Curse")]));
+
+					ar.setDurability(Integer.parseInt(columns[columnNames.get("Dur")]));
+					ar.setWeight(Float.parseFloat(columns[columnNames.get("Weight")]));
+
+					MatchResult mr = null;
+
+					while ((mr = prereqFinder.exec(columns[columnNames.get("Prerequisite")])) != null) {
+						ar.setStatRequirement(statNames.get(mr.getGroup(2)), Integer.parseInt(mr.getGroup(1)));
+					}
+
+					getLogger().info("STR " + ar.getStatRequirement(Stat.STRENGTH));
 
 				} catch (Exception ex) {
 					getLogger().info("Failed to parse line due to " + ex);
