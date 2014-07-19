@@ -3,5 +3,6 @@
 <module rename-to='tsvimporter'>
 	<inherits name="com.google.gwt.user.User" />
 	<source path="client"/>
+	<source path="shared"/>
 	<entry-point class='com.ironalloygames.ds2cc.client.tsvimporter.TSVImporter'/>
 </module>

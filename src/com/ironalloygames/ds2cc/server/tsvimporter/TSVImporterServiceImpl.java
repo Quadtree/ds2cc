@@ -7,6 +7,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ironalloygames.ds2cc.client.tsvimporter.TSVImporterService;
 import com.ironalloygames.ds2cc.shared.data.Armor;
 import com.ironalloygames.ds2cc.shared.data.Armor.ResistanceType;
+import com.ironalloygames.ds2cc.shared.tsvuploader.UploadType;
 
 public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 		TSVImporterService {
@@ -17,8 +18,10 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 	private static final long serialVersionUID = 9068541989033451667L;
 
 	@Override
-	public void upload(String tsvData) {
+	public void upload(String tsvData, UploadType type) {
 		getLogger().info("TSV REC'D: " + tsvData);
+
+		getLogger().info("Upload type is " + type);
 
 		String[] lines = tsvData.split("\n");
 
