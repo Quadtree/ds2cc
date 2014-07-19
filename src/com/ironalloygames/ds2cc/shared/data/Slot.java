@@ -4,5 +4,6 @@ public enum Slot {
 	HEAD,
 	CHEST,
 	LEGS,
-	HANDS
+	HANDS,
+	RING
 }
