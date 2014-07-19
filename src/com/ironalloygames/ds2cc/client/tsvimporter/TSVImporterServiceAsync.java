@@ -5,4 +5,6 @@ import com.ironalloygames.ds2cc.shared.tsvuploader.UploadType;
 
 public interface TSVImporterServiceAsync {
 	void upload(String tsvData, UploadType type, AsyncCallback<Void> callback);
+
+	void downloadAllAsJSON(AsyncCallback<String> callback);
 }

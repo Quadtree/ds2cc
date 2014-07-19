@@ -9,6 +9,7 @@
 			<g:ListBox ui:field="uploadType"/>
 			<g:Label text="Status:" ui:field="statusLabel"/>
 			<g:Button ui:field="beginUploadButton">Begin Upload</g:Button>
+			<g:Button ui:field="downloadAllAsJSON">Download All as JSON</g:Button>
 		</g:VerticalPanel>
 		
 	</g:HTMLPanel>

@@ -24,6 +24,7 @@ public class TSVImporterLayout extends Composite {
 	@UiField TextArea tsvUploadBody;
 	@UiField Label statusLabel;
 	@UiField ListBox uploadType;
+	@UiField Button downloadAllAsJSON;
 
 	TSVImporterServiceAsync tsvImporterService = GWT
 			.create(TSVImporterService.class);
@@ -51,6 +52,23 @@ public class TSVImporterLayout extends Composite {
 			@Override
 			public void onSuccess(Void result) {
 				statusLabel.setText("Success at " + new Date());
+			}
+		});
+	}
+
+	@UiHandler("downloadAllAsJSON")
+	void onDownloadAllAsJSONClick(ClickEvent event) {
+		tsvImporterService.downloadAllAsJSON(new AsyncCallback<String>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				tsvUploadBody.setText(result);
 			}
 		});
 	}

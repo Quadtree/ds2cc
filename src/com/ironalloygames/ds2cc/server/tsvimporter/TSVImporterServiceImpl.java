@@ -1,15 +1,21 @@
 package com.ironalloygames.ds2cc.server.tsvimporter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Query;
 
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.ironalloygames.ds2cc.client.tsvimporter.TSVImporterService;
 import com.ironalloygames.ds2cc.shared.data.Item;
 import com.ironalloygames.ds2cc.shared.data.ResistanceType;
@@ -60,6 +66,10 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 			RegExp prereqFinder = RegExp.compile("(\\d+) ([A-Z]{3})", "g");
 
 			RegExp nameParser = RegExp.compile("(.+)\\+(\\d+)");
+
+			RegExp bonusFinder = RegExp.compile("([A-Z]{3})\\s*\\+\\s*(\\d+)");
+			RegExp compoundBonusFinder = RegExp.compile("([A-Z]{3})\\s*&\\s*([A-Z]{3})\\s*\\+\\s*(\\d+)");
+			RegExp fullNameBonusFinder = RegExp.compile("([A-Za-z]+)\\s*\\+\\s*(\\d+)");
 
 			PersistenceManager pm = pmfInstance.getPersistenceManager();
 
@@ -120,7 +130,18 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 							ar.setStatRequirement(statNames.get(mr.getGroup(2)), Integer.parseInt(mr.getGroup(1)));
 						}
 
-						getLogger().info("Persisting " + ar.getName());
+						while ((mr = compoundBonusFinder.exec(columns[columnNames.get("Effect")])) != null) {
+							ar.setStatModifier(statNames.get(mr.getGroup(1)), Integer.parseInt(mr.getGroup(3)));
+							ar.setStatModifier(statNames.get(mr.getGroup(2)), Integer.parseInt(mr.getGroup(3)));
+						}
+
+						while ((mr = fullNameBonusFinder.exec(columns[columnNames.get("Effect")])) != null) {
+							ar.setStatModifier(Stat.valueOf(mr.getGroup(1).toUpperCase()), Integer.parseInt(mr.getGroup(2)));
+						}
+
+						while ((mr = bonusFinder.exec(columns[columnNames.get("Effect")])) != null) {
+							ar.setStatModifier(statNames.get(mr.getGroup(1)), Integer.parseInt(mr.getGroup(2)));
+						}
 
 						pm.makePersistent(ar);
 					}
@@ -138,6 +159,26 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 
 	private Logger getLogger() {
 		return Logger.getLogger("TSV_Server");
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public String downloadAllAsJSON() {
+		PersistenceManager pm = pmfInstance.getPersistenceManager();
+
+		Query q = pm.newQuery(Item.class);
+
+		ArrayList<Item> retItems = new ArrayList<>();
+
+		for (Item itm : (List<Item>) q.execute()) {
+			retItems.add(itm);
+		}
+
+		// return JSON.toString(retItems);
+
+		AutoBean<ArrayList<Item>> bean = AutoBeanUtils.getAutoBean(retItems);
+
+		return AutoBeanCodex.encode(bean).getPayload();
 	}
 
 }
