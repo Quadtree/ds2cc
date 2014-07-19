@@ -13,6 +13,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ironalloygames.ds2cc.client.tsvimporter.TSVImporterService;
 import com.ironalloygames.ds2cc.shared.data.Armor;
 import com.ironalloygames.ds2cc.shared.data.ResistanceType;
+import com.ironalloygames.ds2cc.shared.data.Slot;
 import com.ironalloygames.ds2cc.shared.data.Stat;
 import com.ironalloygames.ds2cc.shared.tsvuploader.UploadType;
 
@@ -96,6 +97,22 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 
 						ar.setDurability(Integer.parseInt(columns[columnNames.get("Dur")]));
 						ar.setWeight(Float.parseFloat(columns[columnNames.get("Weight")]));
+
+						switch (type)
+						{
+						case TSV_HEAD:
+							ar.setSlot(Slot.HEAD);
+							break;
+						case TSV_LEGS:
+							ar.setSlot(Slot.LEGS);
+							break;
+						case TSV_CHEST:
+							ar.setSlot(Slot.CHEST);
+							break;
+						case TSV_HANDS:
+							ar.setSlot(Slot.HANDS);
+							break;
+						}
 
 						MatchResult mr = null;
 

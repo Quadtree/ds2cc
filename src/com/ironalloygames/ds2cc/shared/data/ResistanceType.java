@@ -1,6 +1,5 @@
 package com.ironalloygames.ds2cc.shared.data;
 
-
 public enum ResistanceType {
 	PHYSICAL,
 	STRIKE,

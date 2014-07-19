@@ -32,20 +32,20 @@ public class Armor extends Item {
 	/**
 	 * Absolute modifiers to stats
 	 */
-	@Persistent
+	@Persistent(serialized = "true")
 	Map<Stat, Integer> statModifiers = new EnumMap<>(Stat.class);
 
 	/**
 	 * Minimum stats to use this item. Some items can be used below these
 	 * minimums, but the item will be less uesful
 	 */
-	@Persistent
+	@Persistent(serialized = "true")
 	Map<Stat, Integer> statRequirements = new EnumMap<>(Stat.class);
 
 	/**
-	 * Bonus resistances when this item is equipped
+	 * s Bonus resistances when this item is equipped
 	 */
-	@Persistent
+	@Persistent(serialized = "true")
 	Map<ResistanceType, Float> resistanceBonus = new EnumMap<>(ResistanceType.class);
 
 	public float getResistance(ResistanceType type)
