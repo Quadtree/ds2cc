@@ -8,5 +8,5 @@ import com.ironalloygames.ds2cc.shared.tsvuploader.UploadType;
 public interface TSVImporterService extends RemoteService {
 	void upload(String tsvData, UploadType type);
 
-	String downloadAllAsJSON();
+	String downloadAll();
 }
