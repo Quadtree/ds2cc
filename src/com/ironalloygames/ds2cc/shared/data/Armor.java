@@ -95,7 +95,7 @@ public class Armor extends Item {
 		resistanceBonus.put(type, amount);
 	}
 
-	public float getStatRequirement(Stat stat)
+	public int getStatRequirement(Stat stat)
 	{
 		if (statRequirements.containsKey(stat))
 			return statRequirements.get(stat);
@@ -108,7 +108,7 @@ public class Armor extends Item {
 		statRequirements.put(stat, amount);
 	}
 
-	public float getStatModifier(Stat stat)
+	public int getStatModifier(Stat stat)
 	{
 		if (statRequirements.containsKey(stat))
 			return statRequirements.get(stat);

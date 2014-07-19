@@ -3,6 +3,9 @@ package com.ironalloygames.ds2cc.server.tsvimporter;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManagerFactory;
+
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -19,6 +22,9 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 	 *
 	 */
 	private static final long serialVersionUID = 9068541989033451667L;
+
+	private static final PersistenceManagerFactory pmfInstance =
+			JDOHelper.getPersistenceManagerFactory();
 
 	@Override
 	public void upload(String tsvData, UploadType type) {
@@ -51,39 +57,51 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 
 			RegExp prereqFinder = RegExp.compile("(\\d+) ([A-Z]{3})", "g");
 
+			RegExp nameParser = RegExp.compile("(.+)\\+(\\d+)");
+
 			for (String line : lines)
 			{
 				try {
 					String[] columns = line.split("\t");
 
-					Armor ar = new Armor();
+					MatchResult nameParseMatchResult = nameParser.exec(columns[columnNames.get("Name")]);
 
-					ar.setName(columns[columnNames.get("Name")]);
+					if (nameParseMatchResult != null)
+					{
+						if (columns[columnNames.get("Reinforcement")].equals("Titanite") && !nameParseMatchResult.getGroup(2).equals("10"))
+							continue;
+						if (columns[columnNames.get("Reinforcement")].equals("Twinkling Titanite") && !nameParseMatchResult.getGroup(2).equals("5"))
+							continue;
 
-					ar.setResistance(ResistanceType.PHYSICAL, Float.parseFloat(columns[columnNames.get("Phys")]));
-					ar.setResistance(ResistanceType.STRIKE, Float.parseFloat(columns[columnNames.get("Str")]));
-					ar.setResistance(ResistanceType.SLASH, Float.parseFloat(columns[columnNames.get("Sls")]));
-					ar.setResistance(ResistanceType.THRUST, Float.parseFloat(columns[columnNames.get("Thr")]));
-					ar.setResistance(ResistanceType.MAGIC, Float.parseFloat(columns[columnNames.get("Mag")]));
-					ar.setResistance(ResistanceType.FIRE, Float.parseFloat(columns[columnNames.get("Fire")]));
-					ar.setResistance(ResistanceType.LIGHTNING, Float.parseFloat(columns[columnNames.get("Light")]));
-					ar.setResistance(ResistanceType.DARK, Float.parseFloat(columns[columnNames.get("Dark")]));
-					ar.setResistance(ResistanceType.POISE, Float.parseFloat(columns[columnNames.get("Poise")]));
-					ar.setResistance(ResistanceType.POISON, Float.parseFloat(columns[columnNames.get("Poison")]));
-					ar.setResistance(ResistanceType.BLEED, Float.parseFloat(columns[columnNames.get("Bleed")]));
-					ar.setResistance(ResistanceType.PETRIFY, Float.parseFloat(columns[columnNames.get("Petrify")]));
-					ar.setResistance(ResistanceType.CURSE, Float.parseFloat(columns[columnNames.get("Curse")]));
+						Armor ar = new Armor();
 
-					ar.setDurability(Integer.parseInt(columns[columnNames.get("Dur")]));
-					ar.setWeight(Float.parseFloat(columns[columnNames.get("Weight")]));
+						ar.setName(nameParseMatchResult.getGroup(1));
 
-					MatchResult mr = null;
+						ar.setResistance(ResistanceType.PHYSICAL, Float.parseFloat(columns[columnNames.get("Phys")]));
+						ar.setResistance(ResistanceType.STRIKE, Float.parseFloat(columns[columnNames.get("Str")]));
+						ar.setResistance(ResistanceType.SLASH, Float.parseFloat(columns[columnNames.get("Sls")]));
+						ar.setResistance(ResistanceType.THRUST, Float.parseFloat(columns[columnNames.get("Thr")]));
+						ar.setResistance(ResistanceType.MAGIC, Float.parseFloat(columns[columnNames.get("Mag")]));
+						ar.setResistance(ResistanceType.FIRE, Float.parseFloat(columns[columnNames.get("Fire")]));
+						ar.setResistance(ResistanceType.LIGHTNING, Float.parseFloat(columns[columnNames.get("Light")]));
+						ar.setResistance(ResistanceType.DARK, Float.parseFloat(columns[columnNames.get("Dark")]));
+						ar.setResistance(ResistanceType.POISE, Float.parseFloat(columns[columnNames.get("Poise")]));
+						ar.setResistance(ResistanceType.POISON, Float.parseFloat(columns[columnNames.get("Poison")]));
+						ar.setResistance(ResistanceType.BLEED, Float.parseFloat(columns[columnNames.get("Bleed")]));
+						ar.setResistance(ResistanceType.PETRIFY, Float.parseFloat(columns[columnNames.get("Petrify")]));
+						ar.setResistance(ResistanceType.CURSE, Float.parseFloat(columns[columnNames.get("Curse")]));
 
-					while ((mr = prereqFinder.exec(columns[columnNames.get("Prerequisite")])) != null) {
-						ar.setStatRequirement(statNames.get(mr.getGroup(2)), Integer.parseInt(mr.getGroup(1)));
+						ar.setDurability(Integer.parseInt(columns[columnNames.get("Dur")]));
+						ar.setWeight(Float.parseFloat(columns[columnNames.get("Weight")]));
+
+						MatchResult mr = null;
+
+						while ((mr = prereqFinder.exec(columns[columnNames.get("Prerequisite")])) != null) {
+							ar.setStatRequirement(statNames.get(mr.getGroup(2)), Integer.parseInt(mr.getGroup(1)));
+						}
+
+						getLogger().info("Persisting " + ar.getName());
 					}
-
-					getLogger().info("STR " + ar.getStatRequirement(Stat.STRENGTH));
 
 				} catch (Exception ex) {
 					getLogger().info("Failed to parse line due to " + ex);
