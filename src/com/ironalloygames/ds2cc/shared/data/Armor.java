@@ -1,6 +1,7 @@
 package com.ironalloygames.ds2cc.shared.data;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -67,20 +68,20 @@ public class Armor extends Item {
 	 * Absolute modifiers to stats
 	 */
 	@Persistent
-	EnumMap<Stat, Integer> statModifiers = new EnumMap<>(Stat.class);
+	Map<Stat, Integer> statModifiers = new EnumMap<>(Stat.class);
 
 	/**
 	 * Minimum stats to use this item. Some items can be used below these
 	 * minimums, but the item will be less uesful
 	 */
 	@Persistent
-	EnumMap<Stat, Integer> statRequirements = new EnumMap<>(Stat.class);
+	Map<Stat, Integer> statRequirements = new EnumMap<>(Stat.class);
 
 	/**
 	 * Bonus resistances when this item is equipped
 	 */
 	@Persistent
-	EnumMap<ResistanceType, Float> resistanceBonus = new EnumMap<>(ResistanceType.class);
+	Map<ResistanceType, Float> resistanceBonus = new EnumMap<>(ResistanceType.class);
 
 	public float getResistance(ResistanceType type)
 	{

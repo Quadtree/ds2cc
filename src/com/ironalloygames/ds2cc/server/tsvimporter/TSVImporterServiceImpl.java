@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 
 import com.google.gwt.regexp.shared.MatchResult;
@@ -24,7 +25,7 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 	private static final long serialVersionUID = 9068541989033451667L;
 
 	private static final PersistenceManagerFactory pmfInstance =
-			JDOHelper.getPersistenceManagerFactory();
+			JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
 	@Override
 	public void upload(String tsvData, UploadType type) {
@@ -58,6 +59,8 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 			RegExp prereqFinder = RegExp.compile("(\\d+) ([A-Z]{3})", "g");
 
 			RegExp nameParser = RegExp.compile("(.+)\\+(\\d+)");
+
+			PersistenceManager pm = pmfInstance.getPersistenceManager();
 
 			for (String line : lines)
 			{
@@ -101,12 +104,16 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 						}
 
 						getLogger().info("Persisting " + ar.getName());
+
+						pm.makePersistent(ar);
 					}
 
 				} catch (Exception ex) {
 					getLogger().info("Failed to parse line due to " + ex);
 				}
 			}
+
+			pm.close();
 		} else {
 			getLogger().warning("No rows found!");
 		}
