@@ -16,6 +16,16 @@
     <url-pattern>/tsvimporter/tsvimporter</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>DataServiceServlet</servlet-name>
+    <servlet-class>com.ironalloygames.ds2cc.server.DataServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>DataServiceServlet</servlet-name>
+    <url-pattern>/ds2cc/data</url-pattern>
+  </servlet-mapping>
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>Ds2cc.html</welcome-file>

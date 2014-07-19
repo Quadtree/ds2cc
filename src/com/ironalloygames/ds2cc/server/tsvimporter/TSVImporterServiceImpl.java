@@ -11,7 +11,7 @@ import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ironalloygames.ds2cc.client.tsvimporter.TSVImporterService;
-import com.ironalloygames.ds2cc.shared.data.Armor;
+import com.ironalloygames.ds2cc.shared.data.Item;
 import com.ironalloygames.ds2cc.shared.data.ResistanceType;
 import com.ironalloygames.ds2cc.shared.data.Slot;
 import com.ironalloygames.ds2cc.shared.data.Stat;
@@ -77,7 +77,7 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 						if (columns[columnNames.get("Reinforcement")].equals("Twinkling Titanite") && !nameParseMatchResult.getGroup(2).equals("5"))
 							continue;
 
-						Armor ar = new Armor();
+						Item ar = new Item();
 
 						ar.setName(nameParseMatchResult.getGroup(1));
 
