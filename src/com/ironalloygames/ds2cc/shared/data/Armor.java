@@ -60,6 +60,9 @@ public class Armor extends Item {
 	@Persistent
 	private float weight;
 
+	@Persistent
+	private String name;
+
 	/**
 	 * Absolute modifiers to stats
 	 */
@@ -161,6 +164,21 @@ public class Armor extends Item {
 	 */
 	public void setWeight(float weight) {
 		this.weight = weight;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name
+	 *            the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }
