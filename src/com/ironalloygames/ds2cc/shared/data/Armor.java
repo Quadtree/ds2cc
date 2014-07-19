@@ -1,8 +1,9 @@
 package com.ironalloygames.ds2cc.shared.data;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 
 import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 
 @PersistenceCapable
 public class Armor extends Item {
@@ -44,33 +45,78 @@ public class Armor extends Item {
 	/**
 	 * The armor slot this particular piece is equipped in
 	 */
+	@Persistent
 	private Slot slot;
 
 	/**
 	 * Maximum durability. Durability is completely restored at bonfires
 	 */
+	@Persistent
 	private int durability;
 
 	/**
 	 * Weight of this item, only matters if it is equipped
 	 */
+	@Persistent
 	private float weight;
 
 	/**
 	 * Absolute modifiers to stats
 	 */
-	HashMap<Stat, Integer> statModifiers;
+	@Persistent
+	EnumMap<Stat, Integer> statModifiers = new EnumMap<>(Stat.class);
 
 	/**
 	 * Minimum stats to use this item. Some items can be used below these
 	 * minimums, but the item will be less uesful
 	 */
-	HashMap<Stat, Integer> statRequirements;
+	@Persistent
+	EnumMap<Stat, Integer> statRequirements = new EnumMap<>(Stat.class);
 
 	/**
 	 * Bonus resistances when this item is equipped
 	 */
-	HashMap<ResistanceType, Float> resistanceBonus;
+	@Persistent
+	EnumMap<ResistanceType, Float> resistanceBonus = new EnumMap<>(ResistanceType.class);
+
+	public float getResistance(ResistanceType type)
+	{
+		if (resistanceBonus.containsKey(type))
+			return resistanceBonus.get(type);
+		else
+			return 0;
+	}
+
+	public void setResistance(ResistanceType type, float amount)
+	{
+		resistanceBonus.put(type, amount);
+	}
+
+	public float getStatRequirement(Stat stat)
+	{
+		if (statRequirements.containsKey(stat))
+			return statRequirements.get(stat);
+		else
+			return 0;
+	}
+
+	public void setStatRequirement(Stat stat, int amount)
+	{
+		statRequirements.put(stat, amount);
+	}
+
+	public float getStatModifier(Stat stat)
+	{
+		if (statRequirements.containsKey(stat))
+			return statRequirements.get(stat);
+		else
+			return 0;
+	}
+
+	public void setStatModifier(Stat stat, int amount)
+	{
+		statRequirements.put(stat, amount);
+	}
 
 	/**
 	 * @return the slot
