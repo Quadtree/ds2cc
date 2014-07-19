@@ -12,8 +12,8 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ironalloygames.ds2cc.client.tsvimporter.TSVImporterService;
 import com.ironalloygames.ds2cc.shared.data.Armor;
-import com.ironalloygames.ds2cc.shared.data.Armor.ResistanceType;
-import com.ironalloygames.ds2cc.shared.data.Armor.Stat;
+import com.ironalloygames.ds2cc.shared.data.ResistanceType;
+import com.ironalloygames.ds2cc.shared.data.Stat;
 import com.ironalloygames.ds2cc.shared.tsvuploader.UploadType;
 
 public class TSVImporterServiceImpl extends RemoteServiceServlet implements

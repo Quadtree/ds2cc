@@ -8,41 +8,6 @@ import javax.jdo.annotations.Persistent;
 
 @PersistenceCapable
 public class Armor extends Item {
-	public enum Slot {
-		HEAD,
-		CHEST,
-		LEGS,
-		HANDS
-	}
-
-	public enum ResistanceType {
-		PHYSICAL,
-		STRIKE,
-		SLASH,
-		THRUST,
-		MAGIC,
-		FIRE,
-		LIGHTNING,
-		DARK,
-		POISE,
-		POISON,
-		BLEED,
-		PETRIFY,
-		CURSE
-	}
-
-	public enum Stat {
-		VIGOR,
-		ENDURANCE,
-		VITALITY,
-		ATTUNMENT,
-		STRENGTH,
-		DEXTERITY,
-		ADAPTABILITY,
-		INTELLIGENCE,
-		FAITH
-	}
-
 	/**
 	 * The armor slot this particular piece is equipped in
 	 */
