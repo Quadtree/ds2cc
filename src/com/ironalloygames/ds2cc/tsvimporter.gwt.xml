@@ -3,4 +3,5 @@
 <module rename-to='tsvimporter'>
 	<inherits name="com.google.gwt.user.User" />
 	<source path="client"/>
+	<entry-point class='com.ironalloygames.ds2cc.client.tsvimporter.TSVImporter'/>
 </module>
