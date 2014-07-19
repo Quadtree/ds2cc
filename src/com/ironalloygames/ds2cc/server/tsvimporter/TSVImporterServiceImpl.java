@@ -41,6 +41,8 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 
 		getLogger().info(lines.length + " lines extracted");
 
+		int numSaved = 0;
+
 		if (lines.length > 0)
 		{
 			// assume the first row is the title row
@@ -55,23 +57,24 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 			getLogger().info("Column names: " + columnNames);
 
 			HashMap<String, Stat> statNames = new HashMap<>();
-			statNames.put("STR", Stat.STRENGTH);
-			statNames.put("DEX", Stat.DEXTERITY);
-			statNames.put("INT", Stat.INTELLIGENCE);
-			statNames.put("FTH", Stat.FAITH);
+			for (Stat stat : Stat.values()) {
+				statNames.put(stat.getAbbrev(), stat);
+			}
 
 			RegExp prereqFinder = RegExp.compile("(\\d+) ([A-Z]{3})", "g");
 
 			RegExp nameParser = RegExp.compile("(.+)\\+(\\d+)");
 
-			RegExp bonusFinder = RegExp.compile("([A-Z]{3})\\s*\\+\\s*(\\d+)");
-			RegExp compoundBonusFinder = RegExp.compile("([A-Z]{3})\\s*&\\s*([A-Z]{3})\\s*\\+\\s*(\\d+)");
-			RegExp fullNameBonusFinder = RegExp.compile("([A-Za-z]+)\\s*\\+\\s*(\\d+)");
+			RegExp bonusFinder = RegExp.compile("([A-Z]{3})\\s*\\+\\s*(\\d+)", "g");
+			RegExp compoundBonusFinder = RegExp.compile("([A-Z]{3})\\s*&\\s*([A-Z]{3})\\s*\\+\\s*(\\d+)", "g");
+			RegExp fullNameBonusFinder = RegExp.compile("([A-Za-z]{4,})\\s*\\+\\s*(\\d+)", "g");
 
 			PersistenceManager pm = pmfInstance.getPersistenceManager();
 
 			for (String line : lines)
 			{
+				boolean saved = false;
+
 				try {
 					String[] columns = line.split("\t");
 
@@ -79,7 +82,7 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 
 					Item ar = new Item();
 
-					if (nameParseMatchResult != null)
+					if (nameParseMatchResult != null && type != UploadType.COMPLETE_DATA_SET)
 					{
 						if (columns[columnNames.get("Reinforcement")].equals("Titanite") && !nameParseMatchResult.getGroup(2).equals("10"))
 							continue;
@@ -134,34 +137,54 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 
 					MatchResult mr = null;
 
-					while ((mr = prereqFinder.exec(columns[columnNames.get("Prerequisite")])) != null) {
-						ar.setStatRequirement(statNames.get(mr.getGroup(2)), Integer.parseInt(mr.getGroup(1)));
+					if (columns.length > columnNames.get("Prerequisite")) {
+						while ((mr = prereqFinder.exec(columns[columnNames.get("Prerequisite")])) != null) {
+							ar.setStatRequirement(statNames.get(mr.getGroup(2)), Integer.parseInt(mr.getGroup(1)));
+						}
 					}
 
-					while ((mr = compoundBonusFinder.exec(columns[columnNames.get("Effect")])) != null) {
-						ar.setStatModifier(statNames.get(mr.getGroup(1)), Integer.parseInt(mr.getGroup(3)));
-						ar.setStatModifier(statNames.get(mr.getGroup(2)), Integer.parseInt(mr.getGroup(3)));
-					}
+					if (columns.length > columnNames.get("Effect")) {
+						while ((mr = compoundBonusFinder.exec(columns[columnNames.get("Effect")])) != null) {
+							ar.setStatModifier(statNames.get(mr.getGroup(1)), Integer.parseInt(mr.getGroup(3)));
+							ar.setStatModifier(statNames.get(mr.getGroup(2)), Integer.parseInt(mr.getGroup(3)));
+							// getLogger().info("COMPOUND BONUS FOUND " +
+							// mr.getGroup(1) + " " + mr.getGroup(2) + " " +
+							// mr.getGroup(3));
+						}
 
-					while ((mr = fullNameBonusFinder.exec(columns[columnNames.get("Effect")])) != null) {
-						ar.setStatModifier(Stat.valueOf(mr.getGroup(1).toUpperCase()), Integer.parseInt(mr.getGroup(2)));
-					}
+						while ((mr = fullNameBonusFinder.exec(columns[columnNames.get("Effect")])) != null) {
+							ar.setStatModifier(Stat.valueOf(mr.getGroup(1).toUpperCase()), Integer.parseInt(mr.getGroup(2)));
+							// getLogger().info("FULL BONUS FOUND " +
+							// mr.getGroup(1) + " " + mr.getGroup(2));
+						}
 
-					while ((mr = bonusFinder.exec(columns[columnNames.get("Effect")])) != null) {
-						ar.setStatModifier(statNames.get(mr.getGroup(1)), Integer.parseInt(mr.getGroup(2)));
+						while ((mr = bonusFinder.exec(columns[columnNames.get("Effect")])) != null) {
+							ar.setStatModifier(statNames.get(mr.getGroup(1)), Integer.parseInt(mr.getGroup(2)));
+							// getLogger().info("BONUS FOUND " + mr.getGroup(1)
+							// + " " + mr.getGroup(2));
+						}
 					}
 
 					pm.makePersistent(ar);
+					saved = true;
 
 				} catch (Exception ex) {
 					getLogger().info("Failed to parse line due to " + ex);
 				}
+
+				if (!saved)
+					getLogger().warning("Failed to save " + line);
+
+				if (saved)
+					numSaved++;
 			}
 
 			pm.close();
 		} else {
 			getLogger().warning("No rows found!");
 		}
+
+		getLogger().info(numSaved + " saved");
 	}
 
 	private Logger getLogger() {
@@ -177,13 +200,26 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 
 		StringBuilder ret = new StringBuilder();
 
-		ret.append("Name	Phys	Str	Sls	Thr	Mag	Fire	Light	Dark	Poise	Poison	Bleed	Petrify	Curse	Dur	Weight	Prerequisite	Effect");
+		ret.append("Name	Phys	Str	Sls	Thr	Mag	Fire	Light	Dark	Poise	Poison	Bleed	Petrify	Curse	Dur	Weight	Prerequisite	Effect\n");
 
 		for (Item itm : (List<Item>) q.execute()) {
 
 			StringBuilder prereq = new StringBuilder();
 
+			for(Stat stat : Stat.values()){
+				if (itm.getStatRequirement(stat) > 0){
+					prereq.append(" " + itm.getStatRequirement(stat) + " " + stat.getAbbrev());
+				}
+			}
+
 			StringBuilder effect = new StringBuilder();
+
+			for (Stat stat : Stat.values())
+			{
+				if (itm.getStatModifier(stat) > 0) {
+					effect.append(" " + stat.getAbbrev() + "+" + itm.getStatModifier(stat));
+				}
+			}
 
 			String[] elements = {
 					itm.getName(),

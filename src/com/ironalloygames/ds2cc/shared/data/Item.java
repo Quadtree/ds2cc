@@ -77,15 +77,15 @@ public class Item implements IsSerializable {
 
 	public int getStatModifier(Stat stat)
 	{
-		if (statRequirements.containsKey(stat))
-			return statRequirements.get(stat);
+		if (statModifiers.containsKey(stat))
+			return statModifiers.get(stat);
 		else
 			return 0;
 	}
 
 	public void setStatModifier(Stat stat, int amount)
 	{
-		statRequirements.put(stat, amount);
+		statModifiers.put(stat, amount);
 	}
 
 	/**
