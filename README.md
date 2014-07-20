@@ -12,6 +12,8 @@ Go to Window -> Preferences -> Google -> Web Toolkit in eclipse, select add and 
 
 Import the cloned project into your Eclipse workspace.
 
+Make sure you are using a Java 7 JDK. GWT is not yet compatible with Java 8.
+
 Verify that the /war/WEB-INF/lib directory contains the JARs. If it doesn't, try switching between different GWT versions...?
 
 Right click on the project and go to Google -> GWT Compile. Accept the defaults and compile.
