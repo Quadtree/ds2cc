@@ -13,7 +13,7 @@
   
   <servlet-mapping>
     <servlet-name>TSVImporterServlet</servlet-name>
-    <url-pattern>/tsvimporter/tsvimporter</url-pattern>
+    <url-pattern>/importer/tsv</url-pattern>
   </servlet-mapping>
   
   <servlet>
@@ -23,7 +23,7 @@
   
   <servlet-mapping>
     <servlet-name>INILikeServlet</servlet-name>
-    <url-pattern>/tsvimporter/inilike</url-pattern>
+    <url-pattern>/importer/inilike</url-pattern>
   </servlet-mapping>
   
   <servlet>
