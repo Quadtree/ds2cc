@@ -1,25 +1,23 @@
 package com.ironalloygames.ds2cc.server.tsvimporter;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
-import javax.jdo.Query;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.ironalloygames.ds2cc.client.tsvimporter.TSVImporterService;
 import com.ironalloygames.ds2cc.shared.data.Item;
 import com.ironalloygames.ds2cc.shared.data.Slot;
 import com.ironalloygames.ds2cc.shared.data.Stat;
 import com.ironalloygames.ds2cc.shared.tsvuploader.UploadType;
 
-public class TSVImporterServiceImpl extends RemoteServiceServlet implements
-		TSVImporterService {
+public class TSVImporterServlet extends HttpServlet {
 
 	/**
 	 *
@@ -31,7 +29,11 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 
 	@SuppressWarnings("incomplete-switch")
 	@Override
-	public void upload(String tsvData, UploadType type) {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
+
+		String tsvData = req.getParameter("tsvData");
+		UploadType type = UploadType.valueOf(req.getParameter("type"));
+
 		getLogger().info("TSV REC'D: " + tsvData);
 
 		getLogger().info("Upload type is " + type);
@@ -205,52 +207,6 @@ public class TSVImporterServiceImpl extends RemoteServiceServlet implements
 
 	private Logger getLogger() {
 		return Logger.getLogger("TSV_Server");
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public String downloadAll() {
-		PersistenceManager pm = pmfInstance.getPersistenceManager();
-
-		Query q = pm.newQuery(Item.class);
-
-		StringBuilder ret = new StringBuilder();
-
-		// ret.append("Name	Phys	Str	Sls	Thr	Mag	Fire	Light	Dark	Poise	Poison	Bleed	Petrify	Curse	Dur	Weight	Prerequisite	Effect\n");
-
-		ret.append("Name\tDur\tWeight\tSlot");
-
-		for (Stat s : Stat.values()) {
-			ret.append("\t+" + s);
-			ret.append("\t*" + s);
-			ret.append("\t>" + s);
-		}
-
-		ret.append("\n");
-
-		for (Item itm : (List<Item>) q.execute()) {
-
-			ret.append(itm.getName());
-			ret.append("\t");
-			ret.append(itm.getDurability());
-			ret.append("\t");
-			ret.append(itm.getWeight());
-			ret.append("\t");
-			ret.append(itm.getSlot());
-
-			for (Stat s : Stat.values()) {
-				ret.append("\t");
-				ret.append(itm.getStatModifier(s));
-				ret.append("\t");
-				ret.append(itm.getStatMultiplier(s));
-				ret.append("\t");
-				ret.append(itm.getStatRequirement(s));
-			}
-
-			ret.append("\n");
-		}
-
-		return ret.toString();
 	}
 
 }

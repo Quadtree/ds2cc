@@ -5,10 +5,10 @@
 	</ui:style>
 	<g:HTMLPanel>
 		<g:VerticalPanel>
-			<g:TextArea width="788px" height="600px" ui:field="tsvUploadBody"/>
+			<g:FileUpload ui:field="fileUpload"/>
 			<g:ListBox ui:field="uploadType"/>
 			<g:Label text="Status:" ui:field="statusLabel"/>
-			<g:Button ui:field="beginUploadButton">Begin Upload</g:Button>
+			<g:Button ui:field="beginUploadButton">Begin TSV Upload</g:Button>
 			<g:Button ui:field="downloadAll">Download All</g:Button>
 		</g:VerticalPanel>
 		

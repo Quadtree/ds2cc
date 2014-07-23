@@ -8,12 +8,22 @@
   <!-- Servlets -->
   <servlet>
     <servlet-name>TSVImporterServlet</servlet-name>
-    <servlet-class>com.ironalloygames.ds2cc.server.tsvimporter.TSVImporterServiceImpl</servlet-class>
+    <servlet-class>com.ironalloygames.ds2cc.server.tsvimporter.TSVImporterServlet</servlet-class>
   </servlet>
   
   <servlet-mapping>
     <servlet-name>TSVImporterServlet</servlet-name>
     <url-pattern>/tsvimporter/tsvimporter</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>INILikeServlet</servlet-name>
+    <servlet-class>com.ironalloygames.ds2cc.server.tsvimporter.INILikeServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>INILikeServlet</servlet-name>
+    <url-pattern>/tsvimporter/inilike</url-pattern>
   </servlet-mapping>
   
   <servlet>

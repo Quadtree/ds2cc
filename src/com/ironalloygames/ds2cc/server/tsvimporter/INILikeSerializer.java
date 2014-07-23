@@ -68,6 +68,25 @@ public class INILikeSerializer {
 							s.append("\n");
 						}
 					} else {
+					}
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+
+		for (Method m : Item.class.getMethods()) {
+
+			try {
+				Matcher matcher = p.matcher(m.getName());
+
+				if (matcher.matches()) {
+					// we've already serialized the name
+					if (matcher.group(1).equals("Name") || matcher.group(1).equals("Class"))
+						continue;
+
+					if (m.getParameterTypes().length == 0) {
+					} else {
 						// its a map internally, and it takes slots...?
 						for (Stat stat : Stat.values()) {
 							Object val = m.invoke(item, stat);
