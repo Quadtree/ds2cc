@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.ironalloygames.ds2cc.shared.data.Item;
+import com.ironalloygames.ds2cc.shared.data.Slot;
 import com.ironalloygames.ds2cc.shared.data.Stat;
 
 public class INILikeSerializer {
@@ -76,6 +77,58 @@ public class INILikeSerializer {
 	}
 
 	public Item deserialize(String data) {
-		return null;
+		Item itm = new Item();
+
+		String[] lines = data.split("\n");
+
+		Pattern nameFinder = Pattern.compile("\\[(.*)\\]");
+		Pattern basicLineFinder = Pattern.compile("^([A-Za-z0-9_]+)=(.*)$");
+		Pattern complexLineFinder = Pattern.compile("^([A-Za-z0-9_]+)\\.([A-Za-z0-9_]+)=(.*)$");
+
+		for (String line : lines) {
+			try {
+				Matcher m;
+
+				if ((m = complexLineFinder.matcher(line)).matches()) {
+
+					Stat stat = Stat.valueOf(m.group(2));
+
+					for (Method method : Item.class.getMethods()) {
+						if (method.getName().equals("set" + m.group(1))) {
+							if (method.getParameterTypes()[1].equals(float.class)) {
+								method.invoke(itm, stat, Float.parseFloat(m.group(3)));
+							} else if (method.getParameterTypes()[1].equals(float.class)) {
+								method.invoke(itm, stat, Integer.parseInt(m.group(3)));
+							} else {
+								// assume its a string... i guess?
+								method.invoke(itm, stat, m.group(3).toString());
+							}
+						}
+					}
+				} else if ((m = basicLineFinder.matcher(line)).matches()) {
+					for (Method method : Item.class.getMethods()) {
+						if (method.getName().equals("set" + m.group(1))) {
+
+							if (method.getParameterTypes()[0].equals(float.class)) {
+								method.invoke(itm, Float.parseFloat(m.group(2)));
+							} else if (method.getParameterTypes()[0].equals(int.class)) {
+								method.invoke(itm, Integer.parseInt(m.group(2)));
+							} else if (method.getParameterTypes()[0].equals(Slot.class)) {
+								method.invoke(itm, Slot.valueOf(m.group(2)));
+							} else {
+								// assume its a string... i guess?
+								method.invoke(itm, m.group(2).toString());
+							}
+						}
+					}
+				} else if ((m = nameFinder.matcher(line)).matches()) {
+					itm.setName(m.group(1));
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+
+		return itm;
 	}
 }
