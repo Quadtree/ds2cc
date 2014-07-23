@@ -28,7 +28,7 @@ public class INILikeSerializerTest {
 		"Durability=5\n"+
 		"\n"+
 		"[ITM2]\n"+
-		"Durability=6\n"
+						"Durability=6\n\n"
 				, serialized);
 
 		List<Item> lst2 = o.deserializeList(serialized);

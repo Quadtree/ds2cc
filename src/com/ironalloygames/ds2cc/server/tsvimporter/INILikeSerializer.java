@@ -12,11 +12,28 @@ import com.ironalloygames.ds2cc.shared.data.Stat;
 
 public class INILikeSerializer {
 	public String serializeList(List<Item> list) {
-		return "";
+		StringBuilder s = new StringBuilder();
+
+		for (Item i : list) {
+			s.append(serialize(i));
+			s.append("\n");
+		}
+
+		return s.toString();
 	}
 
 	public List<Item> deserializeList(String data) {
-		return new ArrayList<Item>();
+		Pattern p = Pattern.compile("\\[(.*)\\][^\\[]+");
+
+		Matcher matcher = p.matcher(data);
+
+		List<Item> list = new ArrayList<Item>();
+
+		while (matcher.find()) {
+			list.add(deserialize(matcher.group()));
+		}
+
+		return list;
 	}
 
 	public String serialize(Item item) {
@@ -39,19 +56,23 @@ public class INILikeSerializer {
 						continue;
 
 					if (m.getParameterTypes().length == 0) {
-						s.append(matcher.group(1).toString());
-						s.append("=");
-						s.append("" + m.invoke(item));
-						s.append("\n");
+
+						Object val = m.invoke(item);
+
+						boolean containsData = objectContainsDataWorthSerializing(val);
+
+						if (containsData) {
+							s.append(matcher.group(1).toString());
+							s.append("=");
+							s.append("" + val);
+							s.append("\n");
+						}
 					} else {
 						// its a map internally, and it takes slots...?
 						for (Stat stat : Stat.values()) {
 							Object val = m.invoke(item, stat);
 
-							boolean containsData = false;
-
-							if (val instanceof Float && (float) val != 0)
-								containsData = true;
+							boolean containsData = objectContainsDataWorthSerializing(val);
 
 							if (containsData) {
 								s.append(matcher.group(1).toString());
@@ -69,11 +90,21 @@ public class INILikeSerializer {
 			}
 		}
 
-		s.append("\n");
-
-		System.out.println(s);
-
 		return s.toString();
+	}
+
+	private boolean objectContainsDataWorthSerializing(Object val) {
+		boolean containsData = false;
+
+		if (val instanceof Float){
+			if(Math.abs((float) val) > 0.0001f)
+				containsData = true;
+		} else if (val instanceof Integer) {
+			if((int) val != 0)
+				containsData = true;
+		} else if (val != null)
+			containsData = true;
+		return containsData;
 	}
 
 	public Item deserialize(String data) {
