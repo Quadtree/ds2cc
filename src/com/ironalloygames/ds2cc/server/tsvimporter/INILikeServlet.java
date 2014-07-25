@@ -1,11 +1,8 @@
 package com.ironalloygames.ds2cc.server.tsvimporter;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
 import java.io.Writer;
-import java.nio.CharBuffer;
 import java.util.List;
 
 import javax.jdo.JDOHelper;
@@ -52,15 +49,7 @@ public class INILikeServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		Reader rdr = new InputStreamReader(req.getInputStream());
 
-		CharBuffer cb = CharBuffer.allocate(1024 * 1024);
-
-		while (req.getInputStream().) {
-		}
-
-		MultipartSplitter sp = new MultipartSplitter();
-		sp.getParts(cb.toString(), req.getHeader("Content-Type"));
 	}
 
 

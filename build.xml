@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="DS2CC" default="fetch" basedir=".">
+	<target name="fetch">
+		<ivy:retrieve pattern="war/WEB-INF/lib/[type]_[branch]_[organisation]_[module]_[artifact]_[revision].[ext]" />
+	</target>
+</project>
