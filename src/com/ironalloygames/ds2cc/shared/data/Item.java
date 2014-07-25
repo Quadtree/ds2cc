@@ -49,6 +49,41 @@ public class Item implements IsSerializable {
 	@Persistent(serialized = "true")
 	Map<Stat, Float> statRequirements = new EnumMap<>(Stat.class);
 
+	public void filterInternalData() {
+		for (Stat s : Stat.values()) {
+			if (statModifiers.containsKey(s) && Math.abs(statModifiers.get(s)) < 0.0001f)
+				statModifiers.remove(s);
+			if (statMultipliers.containsKey(s) && Math.abs(statMultipliers.get(s)) < 0.0001f)
+				statMultipliers.remove(s);
+			if (statRequirements.containsKey(s) && Math.abs(statRequirements.get(s)) < 0.0001f)
+				statRequirements.remove(s);
+		}
+	}
+
+	public Map<Stat, Float> getStatModifiers() {
+		return statModifiers;
+	}
+
+	public void setStatModifiers(Map<Stat, Float> statModifiers) {
+		this.statModifiers = statModifiers;
+	}
+
+	public Map<Stat, Float> getStatMultipliers() {
+		return statMultipliers;
+	}
+
+	public void setStatMultipliers(Map<Stat, Float> statMultipliers) {
+		this.statMultipliers = statMultipliers;
+	}
+
+	public Map<Stat, Float> getStatRequirements() {
+		return statRequirements;
+	}
+
+	public void setStatRequirements(Map<Stat, Float> statRequirements) {
+		this.statRequirements = statRequirements;
+	}
+
 	public float getStatRequirement(Stat stat)
 	{
 		if (statRequirements == null)

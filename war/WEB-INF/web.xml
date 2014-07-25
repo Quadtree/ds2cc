@@ -17,13 +17,13 @@
   </servlet-mapping>
   
   <servlet>
-    <servlet-name>INILikeServlet</servlet-name>
-    <servlet-class>com.ironalloygames.ds2cc.server.tsvimporter.INILikeServlet</servlet-class>
+    <servlet-name>XMLImporterServlet</servlet-name>
+    <servlet-class>com.ironalloygames.ds2cc.server.tsvimporter.XMLImporterServlet</servlet-class>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>INILikeServlet</servlet-name>
-    <url-pattern>/importer/inilike</url-pattern>
+    <servlet-name>XMLImporterServlet</servlet-name>
+    <url-pattern>/importer/xml</url-pattern>
   </servlet-mapping>
   
   <servlet>

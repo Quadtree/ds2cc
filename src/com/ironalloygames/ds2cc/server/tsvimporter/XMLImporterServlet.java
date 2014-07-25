@@ -1,8 +1,7 @@
 package com.ironalloygames.ds2cc.server.tsvimporter;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jdo.JDOHelper;
@@ -14,11 +13,14 @@ import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 
 import com.ironalloygames.ds2cc.shared.data.Item;
+import com.ironalloygames.ds2cc.shared.data.ItemList;
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024, maxRequestSize = 1024 * 1024)
-public class INILikeServlet extends HttpServlet {
+public class XMLImporterServlet extends HttpServlet {
 
 	/**
 	 *
@@ -35,14 +37,28 @@ public class INILikeServlet extends HttpServlet {
 
 		Query q = pm.newQuery(Item.class);
 
-		INILikeSerializer ser = new INILikeSerializer();
+		List<Item> items = (List<Item>) q.execute();
 
-		String serialized = ser.serializeList((List<Item>) q.execute());
+		for (Item i : items)
+			i.filterInternalData();
 
-		resp.setContentType("text/plain");
+		ItemList itemList = new ItemList();
+		itemList.setItems(new ArrayList<Item>(items));
 
-		Writer w = new OutputStreamWriter(resp.getOutputStream());
-		w.write(serialized);
+		resp.setContentType("text/xml");
+
+		try {
+			JAXBContext ctx = JAXBContext.newInstance(ItemList.class);
+
+			Marshaller mrsh = ctx.createMarshaller();
+			mrsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+			mrsh.marshal(itemList, resp.getOutputStream());
+
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+
 	}
 
 
