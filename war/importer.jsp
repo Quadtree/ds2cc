@@ -13,6 +13,7 @@
 			<input name="data" type="file"/>
 			<button>Submit</button>
 		</form>
+		<a href="/importer/xml">Download all data as XML</a>
 	</div>
   </body>
 </html>

@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import javax.xml.bind.annotation.XmlAttribute;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -144,6 +145,7 @@ public class Item implements IsSerializable {
 	/**
 	 * @return the slot
 	 */
+	@XmlAttribute
 	public Slot getSlot() {
 		return slot;
 	}
@@ -159,6 +161,7 @@ public class Item implements IsSerializable {
 	/**
 	 * @return the durability
 	 */
+	@XmlAttribute
 	public int getDurability() {
 		return durability;
 	}
@@ -174,6 +177,7 @@ public class Item implements IsSerializable {
 	/**
 	 * @return the weight
 	 */
+	@XmlAttribute
 	public float getWeight() {
 		return weight;
 	}
@@ -193,6 +197,7 @@ public class Item implements IsSerializable {
 	/**
 	 * @return the name
 	 */
+	@XmlAttribute
 	public String getName() {
 		return name;
 	}
