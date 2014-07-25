@@ -9,7 +9,7 @@
 
     <h1>TSV Importer</h1>
 	<div id="mainContent">
-		<form action="/importer/inilike" method="post" enctype="multipart/form-data">
+		<form action="/importer/xml" method="post" enctype="multipart/form-data">
 			<input name="data" type="file"/>
 			<button>Submit</button>
 		</form>
