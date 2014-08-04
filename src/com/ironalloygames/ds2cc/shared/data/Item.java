@@ -14,8 +14,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 @PersistenceCapable
 public class Item implements IsSerializable {
 
-	@Persistent
-	@XmlElement(name = "encodedImage")
+	@Persistent(serialized = "true")
 	private String encodedImageData;
 
 	/**
@@ -60,6 +59,7 @@ public class Item implements IsSerializable {
 	 *
 	 * @return
 	 */
+	@XmlElement(name = "encodedImage")
 	public String getEncodedImageData() {
 		return encodedImageData;
 	}
