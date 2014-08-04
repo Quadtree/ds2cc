@@ -7,11 +7,16 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @PersistenceCapable
 public class Item implements IsSerializable {
+
+	@Persistent
+	@XmlElement(name = "encodedImage")
+	private String encodedImageData;
 
 	/**
 	 * The armor slot this particular piece is equipped in
@@ -49,6 +54,37 @@ public class Item implements IsSerializable {
 	 */
 	@Persistent(serialized = "true")
 	Map<Stat, Float> statRequirements = new EnumMap<>(Stat.class);
+
+	/**
+	 * Gets this item's image data as a base64 encoded PNG string
+	 *
+	 * @return
+	 */
+	public String getEncodedImageData() {
+		return encodedImageData;
+	}
+
+	/**
+	 * Sets this item's image data as a base64 encoded PNG string
+	 *
+	 * @param encodedImageData
+	 */
+	public void setEncodedImageData(String encodedImageData) {
+		this.encodedImageData = encodedImageData;
+	}
+
+	/**
+	 * Gets a URL that will display this item's image It may be a data URL or a
+	 * URL to another endpoint on the server
+	 *
+	 * @return
+	 */
+	public String getImageSrc() {
+		if (this.getEncodedImageData() != null && this.getEncodedImageData().length() > 0)
+			return "data:image/png;base64," + this.getEncodedImageData();
+		else
+			return "";
+	}
 
 	public void filterInternalData() {
 		for (Stat s : Stat.values()) {
