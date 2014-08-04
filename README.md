@@ -26,6 +26,6 @@ Run the project as a Google Web Application. Follow the link in the console to o
 
 Installing Data
 ===
-Once the dev version is running on your machine, go to http://127.0.0.1:8888/importer/xml
+Once the dev version is running on your machine, go to http://127.0.0.1:8888/importer.jsp
 
 Select the rawdata/data1.xml file and select "Submit"
