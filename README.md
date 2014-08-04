@@ -3,12 +3,12 @@ ds2cc
 
 Instructions for setting up a local dev version:
 
-Install Eclipse 4.3 Kepler
+Install Eclipse 4.4 Luna
 
-* Install the Google Plugin https://dl.google.com/eclipse/plugin/4.3
-* Install the IvyDE plugin https://www.apache.org/dist/ant/ivyde/updatesite.
+* Install the Google Plugin: https://dl.google.com/eclipse/plugin/4.4
+* Install the IvyDE plugin and "Apache Ivy Ant Tasks": https://www.apache.org/dist/ant/ivyde/updatesite.
 
-Download GWT 2.6.1 and unzip it somewhere
+Download GWT 2.6.1 (2.6.0 will probably not work) and unzip it somewhere
 
 Go to Window -> Preferences -> Google -> Web Toolkit in eclipse, select add and then navigate to where the GWT was unzipped.
 
