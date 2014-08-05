@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.ironalloygames.ds2cc.shared.data.Item;
@@ -30,6 +31,11 @@ public class TSVImporterServlet extends HttpServlet {
 	@SuppressWarnings("incomplete-switch")
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
+
+		if (req.getUserPrincipal() == null || !UserServiceFactory.getUserService().isUserAdmin()) {
+			resp.setStatus(403);
+			return;
+		}
 
 		String tsvData = req.getParameter("tsvData");
 		UploadType type = UploadType.valueOf(req.getParameter("type"));

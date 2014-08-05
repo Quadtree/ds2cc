@@ -11,6 +11,7 @@ gwt-unitCache
 www-test
 /war/ds2cc
 /war/tsvimporter
+/war/ds2cceditor
 /war/WEB-INF/deploy
 /war/WEB-INF/appengine-generated
 /war/WEB-INF/classes
