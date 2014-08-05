@@ -49,6 +49,9 @@ public class EditorPage extends Composite {
 	@UiField TextBox weightTextBox;
 	@UiField TextBox nameTextBox;
 	@UiField ListBox slotListBox;
+	@UiField TextBox createNewItemNameBox;
+	@UiField Button createNewItemButton;
+	@UiField Button button;
 
 	final List<Item> itemList = new ArrayList<>();
 
@@ -78,15 +81,30 @@ public class EditorPage extends Composite {
 					// Logger.getLogger("Client").info("ARMOR OF: " +
 					// itm.getStatModifier(Stat.SLASH_RESISTANCE));
 
-					testItemList.addItem(itm.getName() + " " + itm.getSlot());
 					itemList.add(itm);
 				}
+
+				updateItemList();
 			}
 		});
 
 		for (Slot s : Slot.values()) {
 			slotListBox.addItem(s.toString());
 		}
+	}
+
+	private void updateItemList()
+	{
+		int originalSelectedIndex = testItemList.getSelectedIndex();
+
+		testItemList.clear();
+
+		for (Item itm : itemList) {
+			testItemList.addItem(itm.getName() + " " + itm.getSlot());
+		}
+
+		if (originalSelectedIndex != -1)
+			testItemList.setSelectedIndex(originalSelectedIndex);
 	}
 
 	@UiHandler("testItemList")
@@ -211,6 +229,8 @@ public class EditorPage extends Composite {
 			}
 		}
 
+		updateItemList();
+
 		dataService.writeItem(itemBeingEdited, new AsyncCallback<Boolean>() {
 
 			@Override
@@ -223,5 +243,35 @@ public class EditorPage extends Composite {
 				currentStatusLabel.setText("SUCCESS?: " + result);
 			}
 		});
+	}
+
+	@UiHandler("createNewItemButton")
+	void onCreateNewItemButtonClick(ClickEvent event) {
+		Item newItem = new Item();
+		newItem.setName(createNewItemNameBox.getText());
+
+		itemList.add(newItem);
+
+		updateItemList();
+	}
+
+	@UiHandler("button")
+	void onButtonClick(ClickEvent event) {
+
+		int poi = atribsGrid.getRowCount();
+		atribsGrid.resizeRows(atribsGrid.getRowCount() + 1);
+
+		ListBox c1 = createStatTypeComboBox();
+
+		atribsGrid.setWidget(poi, 0, c1);
+
+		ListBox c2 = createStatComboBox();
+
+		atribsGrid.setWidget(poi, 1, c2);
+
+		TextBox tb = new TextBox();
+		tb.setText("0");
+
+		atribsGrid.setWidget(poi, 2, tb);
 	}
 }

@@ -12,6 +12,10 @@
 				<g:VerticalPanel>
 					<g:Label text="New Label" ui:field="currentStatusLabel"/>
 					<g:ListBox visibleItemCount="5" width="231px" height="901px" ui:field="testItemList"/>
+					<g:HorizontalPanel>
+						<g:TextBox ui:field="createNewItemNameBox"/>
+						<g:Button text="Create New Item" ui:field="createNewItemButton"/>
+					</g:HorizontalPanel>
 				</g:VerticalPanel>
 				<g:VerticalPanel spacing="25">
 					<g:Label text="???" ui:field="itemNameLabel" styleName="{style.gwt-Label-Header}"/>
@@ -50,6 +54,7 @@
 							</g:customCell>
 						</g:row>
 					</g:Grid>
+					<g:Button text="Add New Row" ui:field="button"/>
 					<g:Grid ui:field="atribsGrid"/>
 					<g:Button ui:field="saveItemButton">Save</g:Button>
 				</g:VerticalPanel>
