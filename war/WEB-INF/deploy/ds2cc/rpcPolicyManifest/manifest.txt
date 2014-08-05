@@ -1,2 +1,3 @@
 # Module ds2cc
 # RPC service class, partial path of RPC policy file
+com.ironalloygames.ds2cc.client.DataService, 9C4E7AF61ECAE61C7454BE08C4C04218.gwt.rpc

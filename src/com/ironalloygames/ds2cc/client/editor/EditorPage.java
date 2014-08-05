@@ -9,10 +9,12 @@ import java.util.logging.Logger;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Image;
@@ -23,6 +25,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.ironalloygames.ds2cc.client.DataService;
 import com.ironalloygames.ds2cc.client.DataServiceAsync;
 import com.ironalloygames.ds2cc.shared.data.Item;
+import com.ironalloygames.ds2cc.shared.data.Slot;
 import com.ironalloygames.ds2cc.shared.data.Stat;
 
 public class EditorPage extends Composite {
@@ -41,6 +44,11 @@ public class EditorPage extends Composite {
 	@UiField Label itemNameLabel;
 	@UiField Label currentStatusLabel;
 	@UiField Grid atribsGrid;
+	@UiField Button saveItemButton;
+	@UiField TextBox durabilityTextBox;
+	@UiField TextBox weightTextBox;
+	@UiField TextBox nameTextBox;
+	@UiField ListBox slotListBox;
 
 	final List<Item> itemList = new ArrayList<>();
 
@@ -75,6 +83,10 @@ public class EditorPage extends Composite {
 				}
 			}
 		});
+
+		for (Slot s : Slot.values()) {
+			slotListBox.addItem(s.toString());
+		}
 	}
 
 	@UiHandler("testItemList")
@@ -199,5 +211,9 @@ public class EditorPage extends Composite {
 		}
 		c.addChangeHandler(new ItemUpdatedChangeEvent());
 		return c;
+	}
+
+	@UiHandler("saveItemButton")
+	void onSaveItemButtonClick(ClickEvent event) {
 	}
 }

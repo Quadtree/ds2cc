@@ -16,7 +16,42 @@
 				<g:VerticalPanel spacing="25">
 					<g:Label text="???" ui:field="itemNameLabel" styleName="{style.gwt-Label-Header}"/>
 					<g:Image ui:field="itemImage" width="64" height="64"/>
+					<g:Grid>
+						<g:row>
+							<g:customCell>
+								<g:Label text="Name"/>
+							</g:customCell>
+							<g:customCell>
+								<g:TextBox ui:field="nameTextBox"/>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell>
+								<g:Label text="Slot"/>
+							</g:customCell>
+							<g:customCell>
+								<g:ListBox ui:field="slotListBox"/>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell>
+								<g:Label text="Durability" height="100%"/>
+							</g:customCell>
+							<g:customCell>
+								<g:TextBox ui:field="durabilityTextBox"/>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell>
+								<g:Label height="100%" text="Weight"/>
+							</g:customCell>
+							<g:customCell>
+								<g:TextBox ui:field="weightTextBox"/>
+							</g:customCell>
+						</g:row>
+					</g:Grid>
 					<g:Grid ui:field="atribsGrid"/>
+					<g:Button ui:field="saveItemButton">Save</g:Button>
 				</g:VerticalPanel>
 			</g:HorizontalPanel>
 		</g:VerticalPanel>
