@@ -8,14 +8,15 @@
 	</ui:style>
 	<g:HTMLPanel width="1300" height="900">
 		<g:VerticalPanel width="100%" height="100%">
-			<g:HorizontalPanel>
+			<g:HorizontalPanel borderWidth="0">
 				<g:VerticalPanel>
 					<g:Label text="New Label" ui:field="currentStatusLabel"/>
 					<g:ListBox visibleItemCount="5" width="231px" height="901px" ui:field="testItemList"/>
 				</g:VerticalPanel>
-				<g:VerticalPanel>
+				<g:VerticalPanel spacing="25">
 					<g:Label text="???" ui:field="itemNameLabel" styleName="{style.gwt-Label-Header}"/>
 					<g:Image ui:field="itemImage" width="64" height="64"/>
+					<g:Grid ui:field="atribsGrid"/>
 				</g:VerticalPanel>
 			</g:HorizontalPanel>
 		</g:VerticalPanel>

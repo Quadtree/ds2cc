@@ -8,6 +8,7 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ironalloygames.ds2cc.client.DataService;
 import com.ironalloygames.ds2cc.shared.data.Item;
@@ -32,10 +33,37 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		ArrayList<Item> retItems = new ArrayList<>();
 
 		for (Item itm : (List<Item>) q.execute()) {
+			// if (retItems.size() == 0)
+			// Logger.getGlobal().info("ARMOR OF FIRST: " +
+			// itm.getStatModifier(Stat.SLASH_RESISTANCE));
+
+			// force hydration. find a better way to do this?
+			itm.getStatModifiers();
+			itm.getStatMultipliers();
+			itm.getStatRequirements();
+
+			// detach it... so it can be reattached later?
+			pm.detachCopy(itm);
+
 			retItems.add(itm);
 		}
 
 		return retItems;
+	}
+
+	public boolean writeItem(Item item)
+	{
+		/*if (!UserServiceFactory.getUserService().isUserLoggedIn() || !UserServiceFactory.getUserService().isUserAdmin()) {
+			return false;
+		}*/
+
+		PersistenceManager pm = pmfInstance.getPersistenceManager();
+
+		pm.makePersistent(item);
+
+		pm.flush();
+
+		return true;
 	}
 
 }

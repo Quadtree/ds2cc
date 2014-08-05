@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-@PersistenceCapable
+@PersistenceCapable(detachable = "true")
 public class Item implements IsSerializable {
 
 	@Persistent(serialized = "true")
