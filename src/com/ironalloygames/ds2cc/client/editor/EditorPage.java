@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -107,91 +107,47 @@ public class EditorPage extends Composite {
 
 			int poi = 0;
 
-			// Logger.getLogger("Client").info(item.getStatModifiers().toString());
-			// Logger.getLogger("Client").info(item.getStatMultipliers().toString());
-			// Logger.getLogger("Client").info(item.getStatRequirements().toString());
+			poi = generateGridRows(poi, item.getStatModifiers().entrySet(), ItemStatType.Modifier.ordinal());
+			poi = generateGridRows(poi, item.getStatMultipliers().entrySet(), ItemStatType.Multiplier.ordinal());
+			poi = generateGridRows(poi, item.getStatRequirements().entrySet(), ItemStatType.Requirement.ordinal());
 
-			// Logger.getLogger("Client").info("ARMOR: " +
-			// item.getStatModifier(Stat.SLASH_RESISTANCE));
-
-			for (Entry<Stat, Float> kv : item.getStatModifiers().entrySet()) {
-
-				ListBox c1 = createStatTypeComboBox();
-				c1.setSelectedIndex(1);
-
-				atribsGrid.setWidget(poi, 0, c1);
-
-				ListBox c2 = createStatComboBox();
-
-				for (int i = 0; i < Stat.values().length; i++) {
-					if (Stat.values()[i] == kv.getKey()) {
-						c2.setSelectedIndex(i);
-						break;
-					}
-				}
-
-				atribsGrid.setWidget(poi, 1, c2);
-
-				TextBox tb = new TextBox();
-				tb.addChangeHandler(new ItemUpdatedChangeEvent());
-				tb.setText(kv.getValue().toString());
-
-				atribsGrid.setWidget(poi, 2, tb);
-
-				poi++;
-
-				// Logger.getLogger("Client").info(kv.toString());
-			}
+			nameTextBox.setText(item.getName());
+			durabilityTextBox.setText("" + item.getDurability());
+			weightTextBox.setText("" + item.getWeight());
+			slotListBox.setSelectedIndex(item.getSlot().ordinal());
 		}
+	}
+
+	private int generateGridRows(int poi, Set<Entry<Stat, Float>> entries, int itemStatTypeOrdinal) {
+		for (Entry<Stat, Float> kv : entries) {
+
+			ListBox c1 = createStatTypeComboBox();
+			c1.setSelectedIndex(itemStatTypeOrdinal);
+
+			atribsGrid.setWidget(poi, 0, c1);
+
+			ListBox c2 = createStatComboBox();
+
+			for (int i = 0; i < Stat.values().length; i++) {
+				if (Stat.values()[i] == kv.getKey()) {
+					c2.setSelectedIndex(i);
+					break;
+				}
+			}
+
+			atribsGrid.setWidget(poi, 1, c2);
+
+			TextBox tb = new TextBox();
+			tb.setText(kv.getValue().toString());
+
+			atribsGrid.setWidget(poi, 2, tb);
+
+			poi++;
+		}
+		return poi;
 	}
 
 	Item itemBeingEdited = null;
-
-	class ItemUpdatedChangeEvent implements ChangeHandler {
-
-		@Override
-		public void onChange(ChangeEvent event) {
-			itemBeingEdited.setStatModifiers(new HashMap<Stat, Float>());
-			itemBeingEdited.setStatMultipliers(new HashMap<Stat, Float>());
-			itemBeingEdited.setStatRequirements(new HashMap<Stat, Float>());
-			for (int row = 0; row < atribsGrid.getRowCount(); row++) {
-				ItemStatType ist = ItemStatType.values()[((ListBox) atribsGrid.getWidget(row, 0)).getSelectedIndex()];
-				Stat stat = Stat.values()[((ListBox) atribsGrid.getWidget(row, 1)).getSelectedIndex()];
-
-				float value = 0;
-				try {
-					value = Float.parseFloat(((TextBox) atribsGrid.getWidget(row, 2)).getText());
-				} catch (Exception ex) {
-				}
-
-				switch (ist) {
-				case Multiplier:
-					itemBeingEdited.setStatMultiplier(stat, value);
-					break;
-				case Modifier:
-					itemBeingEdited.setStatModifier(stat, value);
-					break;
-				case Requirement:
-					itemBeingEdited.setStatRequirement(stat, value);
-					break;
-				}
-			}
-
-			dataService.writeItem(itemBeingEdited, new AsyncCallback<Boolean>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					currentStatusLabel.setText("FAILURE: " + caught);
-				}
-
-				@Override
-				public void onSuccess(Boolean result) {
-					currentStatusLabel.setText("SUCCESS?: " + result);
-				}
-			});
-		}
-
-	}
 
 	private ListBox createStatTypeComboBox()
 	{
@@ -199,7 +155,6 @@ public class EditorPage extends Composite {
 		for (ItemStatType ist : ItemStatType.values()) {
 			c.addItem(ist.toString());
 		}
-		c.addChangeHandler(new ItemUpdatedChangeEvent());
 		return c;
 	}
 
@@ -209,11 +164,64 @@ public class EditorPage extends Composite {
 		for (Stat ist : Stat.values()) {
 			c.addItem(ist.toString());
 		}
-		c.addChangeHandler(new ItemUpdatedChangeEvent());
 		return c;
 	}
 
 	@UiHandler("saveItemButton")
 	void onSaveItemButtonClick(ClickEvent event) {
+
+		currentStatusLabel.setText("Saving...");
+
+		itemBeingEdited.setName(nameTextBox.getText());
+		itemBeingEdited.setSlot(Slot.values()[slotListBox.getSelectedIndex()]);
+
+		try {
+			itemBeingEdited.setDurability(Integer.parseInt(durabilityTextBox.getText()));
+		} catch (NumberFormatException ex) {
+		}
+
+		try {
+			itemBeingEdited.setWeight(Float.parseFloat(weightTextBox.getText()));
+		} catch (NumberFormatException ex) {
+		}
+
+		itemBeingEdited.setStatModifiers(new HashMap<Stat, Float>());
+		itemBeingEdited.setStatMultipliers(new HashMap<Stat, Float>());
+		itemBeingEdited.setStatRequirements(new HashMap<Stat, Float>());
+		for (int row = 0; row < atribsGrid.getRowCount(); row++) {
+			ItemStatType ist = ItemStatType.values()[((ListBox) atribsGrid.getWidget(row, 0)).getSelectedIndex()];
+			Stat stat = Stat.values()[((ListBox) atribsGrid.getWidget(row, 1)).getSelectedIndex()];
+
+			float value = 0;
+			try {
+				value = Float.parseFloat(((TextBox) atribsGrid.getWidget(row, 2)).getText());
+			} catch (Exception ex) {
+			}
+
+			switch (ist) {
+			case Multiplier:
+				itemBeingEdited.setStatMultiplier(stat, value);
+				break;
+			case Modifier:
+				itemBeingEdited.setStatModifier(stat, value);
+				break;
+			case Requirement:
+				itemBeingEdited.setStatRequirement(stat, value);
+				break;
+			}
+		}
+
+		dataService.writeItem(itemBeingEdited, new AsyncCallback<Boolean>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				currentStatusLabel.setText("FAILURE: " + caught);
+			}
+
+			@Override
+			public void onSuccess(Boolean result) {
+				currentStatusLabel.setText("SUCCESS?: " + result);
+			}
+		});
 	}
 }
