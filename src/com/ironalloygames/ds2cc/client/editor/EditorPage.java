@@ -85,7 +85,7 @@ public class EditorPage extends Composite {
 
 			itemBeingEdited = item;
 
-			Logger.getLogger("Client").info(item.getName());
+			// Logger.getLogger("Client").info(item.getName());
 			itemImage.setUrl(item.getImageSrc());
 			itemNameLabel.setText(item.getName());
 
@@ -148,7 +148,7 @@ public class EditorPage extends Composite {
 
 				float value = 0;
 				try {
-					value = Float.parseFloat(((TextBox) atribsGrid.getWidget(row, 1)).getText());
+					value = Float.parseFloat(((TextBox) atribsGrid.getWidget(row, 2)).getText());
 				} catch (Exception ex) {
 				}
 
@@ -164,6 +164,19 @@ public class EditorPage extends Composite {
 					break;
 				}
 			}
+
+			dataService.writeItem(itemBeingEdited, new AsyncCallback<Boolean>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					currentStatusLabel.setText("FAILURE: " + caught);
+				}
+
+				@Override
+				public void onSuccess(Boolean result) {
+					currentStatusLabel.setText("SUCCESS?: " + result);
+				}
+			});
 		}
 
 	}

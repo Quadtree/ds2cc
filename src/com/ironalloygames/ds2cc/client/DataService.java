@@ -9,4 +9,6 @@ import com.ironalloygames.ds2cc.shared.data.Item;
 @RemoteServiceRelativePath("data")
 public interface DataService extends RemoteService {
 	List<Item> getAllItems();
+
+	boolean writeItem(Item item);
 }
