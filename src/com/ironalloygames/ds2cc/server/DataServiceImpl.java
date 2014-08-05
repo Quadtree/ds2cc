@@ -8,6 +8,7 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ironalloygames.ds2cc.client.DataService;
 import com.ironalloygames.ds2cc.shared.data.Item;
@@ -50,11 +51,12 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		return retItems;
 	}
 
+	@Override
 	public boolean writeItem(Item item)
 	{
-		/*if (!UserServiceFactory.getUserService().isUserLoggedIn() || !UserServiceFactory.getUserService().isUserAdmin()) {
+		if (!UserServiceFactory.getUserService().isUserLoggedIn() || !UserServiceFactory.getUserService().isUserAdmin()) {
 			return false;
-		}*/
+		}
 
 		PersistenceManager pm = pmfInstance.getPersistenceManager();
 
