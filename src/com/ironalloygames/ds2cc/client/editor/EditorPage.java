@@ -1,12 +1,14 @@
 package com.ironalloygames.ds2cc.client.editor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -81,6 +83,8 @@ public class EditorPage extends Composite {
 
 			Item item = itemList.get(testItemList.getSelectedIndex());
 
+			itemBeingEdited = item;
+
 			Logger.getLogger("Client").info(item.getName());
 			itemImage.setUrl(item.getImageSrc());
 			itemNameLabel.setText(item.getName());
@@ -117,6 +121,7 @@ public class EditorPage extends Composite {
 				atribsGrid.setWidget(poi, 1, c2);
 
 				TextBox tb = new TextBox();
+				tb.addChangeHandler(new ItemUpdatedChangeEvent());
 				tb.setText(kv.getValue().toString());
 
 				atribsGrid.setWidget(poi, 2, tb);
@@ -128,12 +133,48 @@ public class EditorPage extends Composite {
 		}
 	}
 
+	Item itemBeingEdited = null;
+
+	class ItemUpdatedChangeEvent implements ChangeHandler {
+
+		@Override
+		public void onChange(ChangeEvent event) {
+			itemBeingEdited.setStatModifiers(new HashMap<Stat, Float>());
+			itemBeingEdited.setStatMultipliers(new HashMap<Stat, Float>());
+			itemBeingEdited.setStatRequirements(new HashMap<Stat, Float>());
+			for (int row = 0; row < atribsGrid.getRowCount(); row++) {
+				ItemStatType ist = ItemStatType.values()[((ListBox) atribsGrid.getWidget(row, 0)).getSelectedIndex()];
+				Stat stat = Stat.values()[((ListBox) atribsGrid.getWidget(row, 1)).getSelectedIndex()];
+
+				float value = 0;
+				try {
+					value = Float.parseFloat(((TextBox) atribsGrid.getWidget(row, 1)).getText());
+				} catch (Exception ex) {
+				}
+
+				switch (ist) {
+				case Multiplier:
+					itemBeingEdited.setStatMultiplier(stat, value);
+					break;
+				case Modifier:
+					itemBeingEdited.setStatModifier(stat, value);
+					break;
+				case Requirement:
+					itemBeingEdited.setStatRequirement(stat, value);
+					break;
+				}
+			}
+		}
+
+	}
+
 	private ListBox createStatTypeComboBox()
 	{
 		ListBox c = new ListBox();
 		for (ItemStatType ist : ItemStatType.values()) {
 			c.addItem(ist.toString());
 		}
+		c.addChangeHandler(new ItemUpdatedChangeEvent());
 		return c;
 	}
 
@@ -143,6 +184,7 @@ public class EditorPage extends Composite {
 		for (Stat ist : Stat.values()) {
 			c.addItem(ist.toString());
 		}
+		c.addChangeHandler(new ItemUpdatedChangeEvent());
 		return c;
 	}
 }

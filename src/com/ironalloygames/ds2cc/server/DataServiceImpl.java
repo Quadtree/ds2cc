@@ -8,7 +8,6 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
-import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ironalloygames.ds2cc.client.DataService;
 import com.ironalloygames.ds2cc.shared.data.Item;
@@ -43,9 +42,9 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			itm.getStatRequirements();
 
 			// detach it... so it can be reattached later?
-			pm.detachCopy(itm);
+			Item detachedItem = pm.detachCopy(itm);
 
-			retItems.add(itm);
+			retItems.add(detachedItem);
 		}
 
 		return retItems;
