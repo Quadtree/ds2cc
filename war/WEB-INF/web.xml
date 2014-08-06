@@ -50,9 +50,30 @@
 			<web-resource-name>editor</web-resource-name>
 			<url-pattern>/editor/*</url-pattern>
 		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>tsv-importer</web-resource-name>
+			<url-pattern>/importer/tsv</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>importer-page</web-resource-name>
+			<url-pattern>importer.jsp</url-pattern>
+		</web-resource-collection>
 		<auth-constraint>
 			<role-name>admin</role-name>
 		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>xml-importer</web-resource-name>
+			<url-pattern>/importer/xml</url-pattern>
+		</web-resource-collection>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
 	</security-constraint>
 
 </web-app>
