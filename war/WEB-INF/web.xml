@@ -56,7 +56,7 @@
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>importer-page</web-resource-name>
-			<url-pattern>importer.jsp</url-pattern>
+			<url-pattern>/importer.jsp</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>admin</role-name>

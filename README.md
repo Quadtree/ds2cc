@@ -28,4 +28,6 @@ Installing Data
 ===
 Once the dev version is running on your machine, go to http://127.0.0.1:8888/importer.jsp
 
-Select the rawdata/data1.xml file and select "Submit"
+Get the current production dataset from https://ds2-cc.appspot.com/importer/xml
+
+Select the file you downloaded and select "Submit"
