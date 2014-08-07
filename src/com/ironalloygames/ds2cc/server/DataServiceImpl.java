@@ -9,12 +9,10 @@ import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ironalloygames.ds2cc.client.DataService;
 import com.ironalloygames.ds2cc.shared.data.Item;
-import com.ironalloygames.ds2cc.shared.data.ItemKey;
 
 public class DataServiceImpl extends RemoteServiceServlet implements DataService {
 
-	private static final String ALL_ITEMS_BASIC_INFO_CACHE_KEY = "ALL_ITEMS_BASIC_INFO";
-	private static final String FULL_ITEM_CACHE_PREFIX = "FULL_ITEM_";
+	private static final String ALL_ITEMS_BASIC_INFO_CACHE_KEY = "ALL_ITEMS_INFO";
 
 	/**
 	 *
@@ -23,12 +21,12 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ItemKey> getAllItemKeys() {
-		List<ItemKey> retItems = null;
+	public List<Item> getAllItems() {
+		List<Item> retItems = null;
 		MemcacheService ms = MemcacheServiceFactory.getMemcacheService();
 
 		try {
-			retItems = (ArrayList<ItemKey>) ms.get(ALL_ITEMS_BASIC_INFO_CACHE_KEY);
+			retItems = (ArrayList<Item>) ms.get(ALL_ITEMS_BASIC_INFO_CACHE_KEY);
 		} catch (Exception ex) {
 			// log the error and continue
 			Logger.getGlobal().warning(ex.toString());
@@ -36,37 +34,13 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 		if (retItems == null && !ms.contains(ALL_ITEMS_BASIC_INFO_CACHE_KEY)) {
 			Logger.getGlobal().info("Cache miss");
-			retItems = ItemDataService.getInstance().getAllItemKeys();
+			retItems = ItemDataService.getInstance().getAllItems();
 			ms.put(ALL_ITEMS_BASIC_INFO_CACHE_KEY, retItems);
 		}
 
 		Logger.getGlobal().info("RESP " + retItems.size());
 
 		return retItems;
-	}
-
-	@Override
-	public Item readItem(ItemKey key) {
-		Item ret = null;
-		MemcacheService ms = MemcacheServiceFactory.getMemcacheService();
-
-		try {
-			ret = (Item) ms.get(FULL_ITEM_CACHE_PREFIX + key.getName());
-		} catch (Exception ex) {
-			// log the error and continue
-			Logger.getGlobal().warning(ex.toString());
-		}
-
-		if (ret == null && !ms.contains(FULL_ITEM_CACHE_PREFIX + key.getName())) {
-			ret = ItemDataService.getInstance().readItem(key);
-
-			if (ret == null)
-				throw new RuntimeException("Item does not exist");
-
-			ms.put(FULL_ITEM_CACHE_PREFIX + key.getName(), ret);
-		}
-
-		return ret;
 	}
 
 }

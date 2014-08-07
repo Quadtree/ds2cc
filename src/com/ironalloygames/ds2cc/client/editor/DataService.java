@@ -5,12 +5,10 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.ironalloygames.ds2cc.shared.data.Item;
-import com.ironalloygames.ds2cc.shared.data.ItemKey;
 
 @RemoteServiceRelativePath("data")
 public interface DataService extends RemoteService {
-	List<ItemKey> getAllItemKeys();
+	List<Item> getAllItems();
 
-	Item readItem(ItemKey ItemKey);
 	boolean writeItem(Item item);
 }

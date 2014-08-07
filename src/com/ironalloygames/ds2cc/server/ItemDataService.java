@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.jdo.FetchPlan;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
@@ -11,7 +12,6 @@ import javax.jdo.Query;
 
 import com.google.appengine.api.datastore.KeyFactory;
 import com.ironalloygames.ds2cc.shared.data.Item;
-import com.ironalloygames.ds2cc.shared.data.ItemKey;
 
 public class ItemDataService {
 	static ItemDataService singleton;
@@ -26,26 +26,32 @@ public class ItemDataService {
 	private final PersistenceManagerFactory pmfInstance = JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
 	@SuppressWarnings("unchecked")
-	public List<ItemKey> getAllItemKeys() {
+	public List<Item> getAllItems() {
 		PersistenceManager pm = pmfInstance.getPersistenceManager();
+		pm.getFetchPlan().setGroup(FetchPlan.ALL);
 
 		Query q = pm.newQuery(Item.class);
 
-		ArrayList<ItemKey> retItems = new ArrayList<>();
+		ArrayList<Item> retItems = new ArrayList<>();
 
 		for (Item itm : (List<Item>) q.execute()) {
-			retItems.add(itm.copyAsBasicItem());
+			Item detachedCopy = pm.detachCopy(itm);
+			detachedCopy.getStatModifiers();
+			detachedCopy.getStatMultipliers();
+			detachedCopy.getStatRequirements();
+			detachedCopy.setEncodedImageData("");
+			retItems.add(detachedCopy);
 		}
 
 		return retItems;
 	}
 
-	public Item readItem(ItemKey key)
+	public Item readItem(String itemName)
 	{
 		try {
 			PersistenceManager pm = pmfInstance.getPersistenceManager();
 
-			return pm.getObjectById(Item.class, KeyFactory.createKey(Item.class.getSimpleName(), key.getName()));
+			return pm.getObjectById(Item.class, KeyFactory.createKey(Item.class.getSimpleName(), itemName));
 		} catch (Exception ex) {
 			Logger.getGlobal().warning(ex.toString());
 			return null;
