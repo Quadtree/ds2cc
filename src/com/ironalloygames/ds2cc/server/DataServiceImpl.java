@@ -40,7 +40,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			ms.put(ALL_ITEMS_BASIC_INFO_CACHE_KEY, retItems);
 		}
 
-		Logger.getGlobal().info("RESP " + retItems.size() + " " + retItems.get(0).getName());
+		Logger.getGlobal().info("RESP " + retItems.size());
 
 		return retItems;
 	}

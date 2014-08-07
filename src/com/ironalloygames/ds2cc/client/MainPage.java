@@ -77,6 +77,10 @@ public class MainPage extends Composite {
 							if (itemList.get(i).getName().equals(result.getName()))
 							{
 								itemList.set(i, result);
+
+								if (i == testItemList.getSelectedIndex()) {
+									itemImage.setUrl(result.getImageSrc());
+								}
 							}
 						}
 					}

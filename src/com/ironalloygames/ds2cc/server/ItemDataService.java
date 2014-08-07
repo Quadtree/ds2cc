@@ -45,7 +45,7 @@ public class ItemDataService {
 		try {
 			PersistenceManager pm = pmfInstance.getPersistenceManager();
 
-			return (Item) pm.getObjectById(KeyFactory.createKey(Item.class.getSimpleName(), key.getName()));
+			return pm.getObjectById(Item.class, KeyFactory.createKey(Item.class.getSimpleName(), key.getName()));
 		} catch (Exception ex) {
 			Logger.getGlobal().warning(ex.toString());
 			return null;
