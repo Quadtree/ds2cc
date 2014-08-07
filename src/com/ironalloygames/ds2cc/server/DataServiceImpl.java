@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.jdo.JDOHelper;
-import javax.jdo.PersistenceManagerFactory;
-
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -24,9 +21,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	 */
 	private static final long serialVersionUID = -3362482680317315145L;
 
-	private static final PersistenceManagerFactory pmfInstance =
-			JDOHelper.getPersistenceManagerFactory("transactions-optional");
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<BasicItem> getAllBasicItems() {
@@ -41,9 +35,12 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		}
 
 		if (retItems == null && !ms.contains(ALL_ITEMS_BASIC_INFO_CACHE_KEY)) {
+			Logger.getGlobal().info("Cache miss");
 			retItems = ItemDataService.getInstance().getAllBasicItems();
 			ms.put(ALL_ITEMS_BASIC_INFO_CACHE_KEY, retItems);
 		}
+
+		Logger.getGlobal().info("RESP " + retItems.size() + " " + retItems.get(0).getName());
 
 		return retItems;
 	}
@@ -62,6 +59,10 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 		if (ret == null && !ms.contains(FULL_ITEM_CACHE_PREFIX + key.getName())) {
 			ret = ItemDataService.getInstance().readItem(key);
+
+			if (ret == null)
+				throw new RuntimeException("Item does not exist");
+
 			ms.put(FULL_ITEM_CACHE_PREFIX + key.getName(), ret);
 		}
 

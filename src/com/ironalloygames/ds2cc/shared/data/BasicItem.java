@@ -1,20 +1,28 @@
 package com.ironalloygames.ds2cc.shared.data;
 
+import java.io.Serializable;
+
+import javax.jdo.annotations.Discriminator;
+import javax.jdo.annotations.DiscriminatorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.xml.bind.annotation.XmlAttribute;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 @PersistenceCapable(detachable = "true")
-public class BasicItem implements IsSerializable {
+@Discriminator(strategy = DiscriminatorStrategy.CLASS_NAME)
+public class BasicItem implements Serializable {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 7735659911930136928L;
 
 	/**
 	 * The armor slot this particular piece is equipped in
 	 */
 	@Persistent
-	private Slot slot;
+	protected Slot slot;
 
 	/**
 	 * @return the slot
@@ -34,7 +42,7 @@ public class BasicItem implements IsSerializable {
 
 	@PrimaryKey
 	@Persistent
-	private String name;
+	protected String name;
 
 	/**
 	 * @return the name

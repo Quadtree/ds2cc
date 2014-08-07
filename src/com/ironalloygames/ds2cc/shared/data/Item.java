@@ -1,17 +1,22 @@
 package com.ironalloygames.ds2cc.shared.data;
 
+import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 @PersistenceCapable(detachable = "true")
-public class Item extends BasicItem implements IsSerializable {
+public class Item extends BasicItem implements Serializable {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 815188805287074315L;
 
 	@Persistent(serialized = "true")
 	private String encodedImageData;
@@ -206,13 +211,16 @@ public class Item extends BasicItem implements IsSerializable {
 	/**
 	 * Creates a copy of this item as a BasicItem Since an Item is already a
 	 * BasicItem, this is mainly used for serialization purposes
-	 * 
+	 *
 	 * @return
 	 */
 	public BasicItem copyAsBasicItem() {
 		BasicItem bi = new BasicItem();
 		bi.setName(this.getName());
 		bi.setSlot(this.getSlot());
+
+		Logger.getLogger("DALOGGER").info(bi.getName() + " " + this.getName());
+
 		return bi;
 	}
 }
