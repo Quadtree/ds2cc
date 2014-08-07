@@ -12,7 +12,7 @@ import com.ironalloygames.ds2cc.shared.data.Item;
 
 public class DataServiceImpl extends RemoteServiceServlet implements DataService {
 
-	private static final String ALL_ITEMS_BASIC_INFO_CACHE_KEY = "ALL_ITEMS_INFO";
+	public static final String ALL_ITEMS_BASIC_INFO_CACHE_KEY = "ALL_ITEMS_INFO";
 
 	/**
 	 *
@@ -33,12 +33,9 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		}
 
 		if (retItems == null && !ms.contains(ALL_ITEMS_BASIC_INFO_CACHE_KEY)) {
-			Logger.getGlobal().info("Cache miss");
 			retItems = ItemDataService.getInstance().getAllItems();
 			ms.put(ALL_ITEMS_BASIC_INFO_CACHE_KEY, retItems);
 		}
-
-		Logger.getGlobal().info("RESP " + retItems.size());
 
 		return retItems;
 	}

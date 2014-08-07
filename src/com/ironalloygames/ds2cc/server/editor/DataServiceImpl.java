@@ -2,6 +2,8 @@ package com.ironalloygames.ds2cc.server.editor;
 
 import java.util.List;
 
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ironalloygames.ds2cc.client.editor.DataService;
@@ -35,6 +37,10 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		}
 
 		ItemDataService.getInstance().writeItem(item);
+
+		// clear the other service's cache
+		MemcacheService ms = MemcacheServiceFactory.getMemcacheService();
+		ms.delete(com.ironalloygames.ds2cc.server.DataServiceImpl.ALL_ITEMS_BASIC_INFO_CACHE_KEY);
 
 		return true;
 	}
