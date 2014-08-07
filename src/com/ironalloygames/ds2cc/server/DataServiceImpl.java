@@ -2,18 +2,22 @@ package com.ironalloygames.ds2cc.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
-import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ironalloygames.ds2cc.client.DataService;
 import com.ironalloygames.ds2cc.shared.data.Item;
 
 public class DataServiceImpl extends RemoteServiceServlet implements DataService {
+
+	private static final String ALL_ITEMS_BASIC_INFO_CACHE_KEY = "ALL_ITEMS_BASIC_INFO";
 
 	/**
 	 *
@@ -26,6 +30,24 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Item> getAllItems() {
+		ArrayList<Item> retItems = null;
+		MemcacheService ms = MemcacheServiceFactory.getMemcacheService();
+
+		try {
+			retItems = (ArrayList<Item>) ms.get(ALL_ITEMS_BASIC_INFO_CACHE_KEY);
+		} catch (Exception ex) {
+			// log the error and continue
+			Logger.getGlobal().warning(ex.toString());
+		}
+
+		if (retItems == null)
+			retItems = doGetAllItemsBasicInfo();
+
+		return retItems;
+	}
+
+	@SuppressWarnings("unchecked")
+	private ArrayList<Item> doGetAllItemsBasicInfo() {
 		PersistenceManager pm = pmfInstance.getPersistenceManager();
 
 		Query q = pm.newQuery(Item.class);
@@ -47,24 +69,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 			retItems.add(detachedItem);
 		}
-
 		return retItems;
-	}
-
-	@Override
-	public boolean writeItem(Item item)
-	{
-		if (!UserServiceFactory.getUserService().isUserLoggedIn() || !UserServiceFactory.getUserService().isUserAdmin()) {
-			return false;
-		}
-
-		PersistenceManager pm = pmfInstance.getPersistenceManager();
-
-		pm.makePersistent(item);
-
-		pm.flush();
-
-		return true;
 	}
 
 }

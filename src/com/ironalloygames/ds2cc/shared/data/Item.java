@@ -5,23 +5,16 @@ import java.util.Map;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @PersistenceCapable(detachable = "true")
-public class Item implements IsSerializable {
+public class Item extends BasicItem implements IsSerializable {
 
 	@Persistent(serialized = "true")
 	private String encodedImageData;
-
-	/**
-	 * The armor slot this particular piece is equipped in
-	 */
-	@Persistent
-	private Slot slot;
 
 	/**
 	 * Maximum durability. Durability is completely restored at bonfires
@@ -179,22 +172,6 @@ public class Item implements IsSerializable {
 	}
 
 	/**
-	 * @return the slot
-	 */
-	@XmlAttribute
-	public Slot getSlot() {
-		return slot;
-	}
-
-	/**
-	 * @param slot
-	 *            the slot to set
-	 */
-	public void setSlot(Slot slot) {
-		this.slot = slot;
-	}
-
-	/**
 	 * @return the durability
 	 */
 	@XmlAttribute
@@ -224,25 +201,5 @@ public class Item implements IsSerializable {
 	 */
 	public void setWeight(float weight) {
 		this.weight = weight;
-	}
-
-	@PrimaryKey
-	@Persistent
-	private String name;
-
-	/**
-	 * @return the name
-	 */
-	@XmlAttribute
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
 	}
 }

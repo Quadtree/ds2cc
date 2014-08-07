@@ -22,8 +22,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.ironalloygames.ds2cc.client.DataService;
-import com.ironalloygames.ds2cc.client.DataServiceAsync;
+import com.ironalloygames.ds2cc.shared.data.BasicItem;
 import com.ironalloygames.ds2cc.shared.data.Item;
 import com.ironalloygames.ds2cc.shared.data.Slot;
 import com.ironalloygames.ds2cc.shared.data.Stat;
@@ -53,7 +52,7 @@ public class EditorPage extends Composite {
 	@UiField Button createNewItemButton;
 	@UiField Button button;
 
-	final List<Item> itemList = new ArrayList<>();
+	final List<BasicItem> itemList = new ArrayList<>();
 
 	interface EditorPageUiBinder extends UiBinder<Widget, EditorPage> {
 	}
@@ -64,7 +63,7 @@ public class EditorPage extends Composite {
 		Logger.getLogger("Client").info("Starting up");
 		currentStatusLabel.setText("Loading...");
 
-		dataService.getAllItems(new AsyncCallback<List<Item>>() {
+		dataService.getAllItemsBasicInfo(new AsyncCallback<List<BasicItem>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -72,15 +71,10 @@ public class EditorPage extends Composite {
 			}
 
 			@Override
-			public void onSuccess(List<Item> result) {
+			public void onSuccess(List<BasicItem> result) {
 				currentStatusLabel.setText("SUCCESS: " + result.size());
 
-				for (Item itm : result) {
-
-					// if (itemList.size() == 0)
-					// Logger.getLogger("Client").info("ARMOR OF: " +
-					// itm.getStatModifier(Stat.SLASH_RESISTANCE));
-
+				for (BasicItem itm : result) {
 					itemList.add(itm);
 				}
 
@@ -99,7 +93,7 @@ public class EditorPage extends Composite {
 
 		testItemList.clear();
 
-		for (Item itm : itemList) {
+		for (BasicItem itm : itemList) {
 			testItemList.addItem(itm.getName() + " " + itm.getSlot());
 		}
 
@@ -111,29 +105,40 @@ public class EditorPage extends Composite {
 	void onTestItemListChange(ChangeEvent event) {
 		if (testItemList.getSelectedIndex() != -1) {
 
-			Item item = itemList.get(testItemList.getSelectedIndex());
+			BasicItem bi = itemList.get(testItemList.getSelectedIndex());
 
-			itemBeingEdited = item;
+			if (bi instanceof Item)
+			{
+				setSelectedItemTo((Item) bi);
+			} else {
 
-			// Logger.getLogger("Client").info(item.getName());
-			itemImage.setUrl(item.getImageSrc());
-			itemNameLabel.setText(item.getName());
+			}
 
-			int atribsCount = item.getStatModifiers().size() + item.getStatMultipliers().size() + item.getStatRequirements().size();
-
-			atribsGrid.resize(atribsCount, 3);
-
-			int poi = 0;
-
-			poi = generateGridRows(poi, item.getStatModifiers().entrySet(), ItemStatType.Modifier.ordinal());
-			poi = generateGridRows(poi, item.getStatMultipliers().entrySet(), ItemStatType.Multiplier.ordinal());
-			poi = generateGridRows(poi, item.getStatRequirements().entrySet(), ItemStatType.Requirement.ordinal());
-
-			nameTextBox.setText(item.getName());
-			durabilityTextBox.setText("" + item.getDurability());
-			weightTextBox.setText("" + item.getWeight());
-			slotListBox.setSelectedIndex(item.getSlot().ordinal());
 		}
+	}
+
+	private void setSelectedItemTo(Item item)
+	{
+		itemBeingEdited = item;
+
+		// Logger.getLogger("Client").info(item.getName());
+		itemImage.setUrl(item.getImageSrc());
+		itemNameLabel.setText(item.getName());
+
+		int atribsCount = item.getStatModifiers().size() + item.getStatMultipliers().size() + item.getStatRequirements().size();
+
+		atribsGrid.resize(atribsCount, 3);
+
+		int poi = 0;
+
+		poi = generateGridRows(poi, item.getStatModifiers().entrySet(), ItemStatType.Modifier.ordinal());
+		poi = generateGridRows(poi, item.getStatMultipliers().entrySet(), ItemStatType.Multiplier.ordinal());
+		poi = generateGridRows(poi, item.getStatRequirements().entrySet(), ItemStatType.Requirement.ordinal());
+
+		nameTextBox.setText(item.getName());
+		durabilityTextBox.setText("" + item.getDurability());
+		weightTextBox.setText("" + item.getWeight());
+		slotListBox.setSelectedIndex(item.getSlot().ordinal());
 	}
 
 	private int generateGridRows(int poi, Set<Entry<Stat, Float>> entries, int itemStatTypeOrdinal) {

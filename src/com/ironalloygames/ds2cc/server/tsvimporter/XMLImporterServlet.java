@@ -22,6 +22,7 @@ import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.google.appengine.api.users.UserServiceFactory;
+import com.ironalloygames.ds2cc.shared.data.BasicItem;
 import com.ironalloygames.ds2cc.shared.data.Item;
 import com.ironalloygames.ds2cc.shared.data.ItemList;
 
@@ -101,7 +102,7 @@ public class XMLImporterServlet extends HttpServlet {
 					Query q = pm.newQuery(Item.class);
 
 
-					for (Item i : (List<Item>) q.execute()) {
+					for (BasicItem i : (List<Item>) q.execute()) {
 						pm.deletePersistent(i);
 						Logger.getGlobal().info("Deleting " + i.getName());
 						deleted++;
