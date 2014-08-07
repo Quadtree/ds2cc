@@ -21,14 +21,7 @@
 					<g:Label text="???" ui:field="itemNameLabel" styleName="{style.gwt-Label-Header}"/>
 					<g:Image ui:field="itemImage" width="64" height="64"/>
 					<g:Grid>
-						<g:row>
-							<g:customCell>
-								<g:Label text="Name"/>
-							</g:customCell>
-							<g:customCell>
-								<g:TextBox ui:field="nameTextBox"/>
-							</g:customCell>
-						</g:row>
+						<g:row/>
 						<g:row>
 							<g:customCell>
 								<g:Label text="Slot"/>

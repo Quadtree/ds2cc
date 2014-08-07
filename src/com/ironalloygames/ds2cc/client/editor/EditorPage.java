@@ -45,7 +45,6 @@ public class EditorPage extends Composite {
 	@UiField Button saveItemButton;
 	@UiField TextBox durabilityTextBox;
 	@UiField TextBox weightTextBox;
-	@UiField TextBox nameTextBox;
 	@UiField ListBox slotListBox;
 	@UiField TextBox createNewItemNameBox;
 	@UiField Button createNewItemButton;
@@ -134,7 +133,6 @@ public class EditorPage extends Composite {
 		poi = generateGridRows(poi, item.getStatMultipliers().entrySet(), ItemStatType.Multiplier.ordinal());
 		poi = generateGridRows(poi, item.getStatRequirements().entrySet(), ItemStatType.Requirement.ordinal());
 
-		nameTextBox.setText(item.getName());
 		durabilityTextBox.setText("" + item.getDurability());
 		weightTextBox.setText("" + item.getWeight());
 		slotListBox.setSelectedIndex(item.getSlot().ordinal());
@@ -194,7 +192,6 @@ public class EditorPage extends Composite {
 
 		currentStatusLabel.setText("Saving...");
 
-		itemBeingEdited.setName(nameTextBox.getText());
 		itemBeingEdited.setSlot(Slot.values()[slotListBox.getSelectedIndex()]);
 
 		try {
