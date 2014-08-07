@@ -29,7 +29,5 @@
 			<!-- The App Engine SDK already includes the servlet framework, so if it is downloaded again it may conflict -->
 			<exclude module=".*servlet.*" matcher="regexp"/>
 		</dependency>
-		<dependency org="commons-codec" name="commons-codec" rev="1.8">
-		</dependency>
 	</dependencies>
 </ivy-module>
