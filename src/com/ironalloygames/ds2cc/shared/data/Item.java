@@ -202,4 +202,17 @@ public class Item extends BasicItem implements IsSerializable {
 	public void setWeight(float weight) {
 		this.weight = weight;
 	}
+
+	/**
+	 * Creates a copy of this item as a BasicItem Since an Item is already a
+	 * BasicItem, this is mainly used for serialization purposes
+	 * 
+	 * @return
+	 */
+	public BasicItem copyAsBasicItem() {
+		BasicItem bi = new BasicItem();
+		bi.setName(this.getName());
+		bi.setSlot(this.getSlot());
+		return bi;
+	}
 }

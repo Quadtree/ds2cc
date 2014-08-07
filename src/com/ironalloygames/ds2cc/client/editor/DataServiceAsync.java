@@ -8,6 +8,6 @@ import com.ironalloygames.ds2cc.shared.data.Item;
 
 public interface DataServiceAsync {
 	void getAllItemsBasicInfo(AsyncCallback<List<BasicItem>> callback);
-
+	void readItem(BasicItem basicItem, AsyncCallback<Item> callback);
 	void writeItem(Item item, AsyncCallback<Boolean> callback);
 }
