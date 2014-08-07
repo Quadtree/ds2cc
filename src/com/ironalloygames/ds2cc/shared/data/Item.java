@@ -7,11 +7,12 @@ import java.util.logging.Logger;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 @PersistenceCapable(detachable = "true")
-public class Item extends BasicItem implements Serializable {
+public class Item implements Serializable, ItemKey {
 
 	/**
 	 *
@@ -51,6 +52,50 @@ public class Item extends BasicItem implements Serializable {
 	 */
 	@Persistent(serialized = "true")
 	Map<Stat, Float> statRequirements = new EnumMap<>(Stat.class);
+
+	@PrimaryKey
+	@Persistent
+	protected String name;
+
+	/**
+	 * The armor slot this particular piece is equipped in
+	 */
+	@Persistent
+	protected Slot slot;
+
+	/**
+	 * @return the slot
+	 */
+	@Override
+	@XmlAttribute
+	public Slot getSlot() {
+		return slot;
+	}
+
+	/**
+	 * @param slot
+	 *            the slot to set
+	 */
+	public void setSlot(Slot slot) {
+		this.slot = slot;
+	}
+
+	/**
+	 * @return the name
+	 */
+	@Override
+	@XmlAttribute
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name
+	 *            the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	/**
 	 * Gets this item's image data as a base64 encoded PNG string

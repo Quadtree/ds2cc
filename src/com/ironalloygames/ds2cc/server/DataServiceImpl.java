@@ -8,8 +8,8 @@ import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ironalloygames.ds2cc.client.DataService;
-import com.ironalloygames.ds2cc.shared.data.BasicItem;
 import com.ironalloygames.ds2cc.shared.data.Item;
+import com.ironalloygames.ds2cc.shared.data.ItemKey;
 
 public class DataServiceImpl extends RemoteServiceServlet implements DataService {
 
@@ -23,12 +23,12 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<BasicItem> getAllBasicItems() {
-		List<BasicItem> retItems = null;
+	public List<ItemKey> getAllItemKeys() {
+		List<ItemKey> retItems = null;
 		MemcacheService ms = MemcacheServiceFactory.getMemcacheService();
 
 		try {
-			retItems = (ArrayList<BasicItem>) ms.get(ALL_ITEMS_BASIC_INFO_CACHE_KEY);
+			retItems = (ArrayList<ItemKey>) ms.get(ALL_ITEMS_BASIC_INFO_CACHE_KEY);
 		} catch (Exception ex) {
 			// log the error and continue
 			Logger.getGlobal().warning(ex.toString());
@@ -36,7 +36,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 		if (retItems == null && !ms.contains(ALL_ITEMS_BASIC_INFO_CACHE_KEY)) {
 			Logger.getGlobal().info("Cache miss");
-			retItems = ItemDataService.getInstance().getAllBasicItems();
+			retItems = ItemDataService.getInstance().getAllItemKeys();
 			ms.put(ALL_ITEMS_BASIC_INFO_CACHE_KEY, retItems);
 		}
 
@@ -46,7 +46,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	}
 
 	@Override
-	public Item readItem(BasicItem key) {
+	public Item readItem(ItemKey key) {
 		Item ret = null;
 		MemcacheService ms = MemcacheServiceFactory.getMemcacheService();
 

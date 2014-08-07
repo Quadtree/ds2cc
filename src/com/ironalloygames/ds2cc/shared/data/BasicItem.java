@@ -2,16 +2,7 @@ package com.ironalloygames.ds2cc.shared.data;
 
 import java.io.Serializable;
 
-import javax.jdo.annotations.Discriminator;
-import javax.jdo.annotations.DiscriminatorStrategy;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
-import javax.xml.bind.annotation.XmlAttribute;
-
-@PersistenceCapable(detachable = "true")
-@Discriminator(strategy = DiscriminatorStrategy.CLASS_NAME)
-public class BasicItem implements Serializable {
+public class BasicItem implements Serializable, ItemKey {
 
 	/**
 	 *
@@ -21,13 +12,11 @@ public class BasicItem implements Serializable {
 	/**
 	 * The armor slot this particular piece is equipped in
 	 */
-	@Persistent
 	protected Slot slot;
 
 	/**
 	 * @return the slot
 	 */
-	@XmlAttribute
 	public Slot getSlot() {
 		return slot;
 	}
@@ -40,14 +29,11 @@ public class BasicItem implements Serializable {
 		this.slot = slot;
 	}
 
-	@PrimaryKey
-	@Persistent
 	protected String name;
 
 	/**
 	 * @return the name
 	 */
-	@XmlAttribute
 	public String getName() {
 		return name;
 	}

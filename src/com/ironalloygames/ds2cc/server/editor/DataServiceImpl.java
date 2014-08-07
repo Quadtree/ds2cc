@@ -9,8 +9,8 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ironalloygames.ds2cc.client.editor.DataService;
 import com.ironalloygames.ds2cc.server.ItemDataService;
-import com.ironalloygames.ds2cc.shared.data.BasicItem;
 import com.ironalloygames.ds2cc.shared.data.Item;
+import com.ironalloygames.ds2cc.shared.data.ItemKey;
 
 public class DataServiceImpl extends RemoteServiceServlet implements DataService {
 
@@ -25,13 +25,13 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<BasicItem> getAllItemsBasicInfo() {
+	public List<ItemKey> getAllItemKeys() {
 
 		if (!UserServiceFactory.getUserService().isUserLoggedIn() || !UserServiceFactory.getUserService().isUserAdmin()) {
 			return null;
 		}
 
-		return ItemDataService.getInstance().getAllBasicItems();
+		return ItemDataService.getInstance().getAllItemKeys();
 	}
 
 	@Override
@@ -47,12 +47,12 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	}
 
 	@Override
-	public Item readItem(BasicItem basicItem) {
+	public Item readItem(ItemKey ItemKey) {
 		if (!UserServiceFactory.getUserService().isUserLoggedIn() || !UserServiceFactory.getUserService().isUserAdmin()) {
 			return null;
 		}
 
-		return ItemDataService.getInstance().readItem(basicItem);
+		return ItemDataService.getInstance().readItem(ItemKey);
 	}
 
 }

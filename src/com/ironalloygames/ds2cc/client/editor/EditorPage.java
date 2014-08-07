@@ -22,8 +22,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.ironalloygames.ds2cc.shared.data.BasicItem;
 import com.ironalloygames.ds2cc.shared.data.Item;
+import com.ironalloygames.ds2cc.shared.data.ItemKey;
 import com.ironalloygames.ds2cc.shared.data.Slot;
 import com.ironalloygames.ds2cc.shared.data.Stat;
 
@@ -52,7 +52,7 @@ public class EditorPage extends Composite {
 	@UiField Button createNewItemButton;
 	@UiField Button button;
 
-	final List<BasicItem> itemList = new ArrayList<>();
+	final List<ItemKey> itemList = new ArrayList<>();
 
 	interface EditorPageUiBinder extends UiBinder<Widget, EditorPage> {
 	}
@@ -63,7 +63,7 @@ public class EditorPage extends Composite {
 		Logger.getLogger("Client").info("Starting up");
 		currentStatusLabel.setText("Loading...");
 
-		dataService.getAllItemsBasicInfo(new AsyncCallback<List<BasicItem>>() {
+		dataService.getAllItemKeys(new AsyncCallback<List<ItemKey>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -71,10 +71,10 @@ public class EditorPage extends Composite {
 			}
 
 			@Override
-			public void onSuccess(List<BasicItem> result) {
+			public void onSuccess(List<ItemKey> result) {
 				currentStatusLabel.setText("SUCCESS: " + result.size());
 
-				for (BasicItem itm : result) {
+				for (ItemKey itm : result) {
 					itemList.add(itm);
 				}
 
@@ -93,7 +93,7 @@ public class EditorPage extends Composite {
 
 		testItemList.clear();
 
-		for (BasicItem itm : itemList) {
+		for (ItemKey itm : itemList) {
 			testItemList.addItem(itm.getName() + " " + itm.getSlot());
 		}
 
@@ -105,7 +105,7 @@ public class EditorPage extends Composite {
 	void onTestItemListChange(ChangeEvent event) {
 		if (testItemList.getSelectedIndex() != -1) {
 
-			BasicItem bi = itemList.get(testItemList.getSelectedIndex());
+			ItemKey bi = itemList.get(testItemList.getSelectedIndex());
 
 			if (bi instanceof Item)
 			{

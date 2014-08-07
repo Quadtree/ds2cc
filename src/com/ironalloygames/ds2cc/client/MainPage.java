@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.ironalloygames.ds2cc.shared.data.BasicItem;
 import com.ironalloygames.ds2cc.shared.data.Item;
+import com.ironalloygames.ds2cc.shared.data.ItemKey;
 
 public class MainPage extends Composite {
 
@@ -29,7 +29,7 @@ public class MainPage extends Composite {
 	@UiField ListBox testItemList;
 	@UiField Image itemImage;
 
-	final List<BasicItem> itemList = new ArrayList<>();
+	final List<ItemKey> itemList = new ArrayList<>();
 
 	interface MainPageUiBinder extends UiBinder<Widget, MainPage> {
 	}
@@ -39,7 +39,7 @@ public class MainPage extends Composite {
 
 		Logger.getLogger("Client").info("Starting up");
 
-		dataService.getAllBasicItems(new AsyncCallback<List<BasicItem>>() {
+		dataService.getAllItemKeys(new AsyncCallback<List<ItemKey>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -47,10 +47,10 @@ public class MainPage extends Composite {
 			}
 
 			@Override
-			public void onSuccess(List<BasicItem> result) {
+			public void onSuccess(List<ItemKey> result) {
 				Logger.getLogger("Client").info("SUCCESS: " + result.size());
 
-				for (BasicItem itm : result) {
+				for (ItemKey itm : result) {
 					testItemList.addItem(itm.getName() + " " + itm.getSlot());
 					itemList.add(itm);
 				}
@@ -62,7 +62,7 @@ public class MainPage extends Composite {
 	void onTestItemListChange(ChangeEvent event) {
 		if (testItemList.getSelectedIndex() != -1) {
 
-			BasicItem curItem = itemList.get(testItemList.getSelectedIndex());
+			ItemKey curItem = itemList.get(testItemList.getSelectedIndex());
 
 			Logger.getLogger("Client").info(curItem.getName());
 

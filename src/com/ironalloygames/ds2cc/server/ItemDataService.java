@@ -10,8 +10,8 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
 import com.google.appengine.api.datastore.KeyFactory;
-import com.ironalloygames.ds2cc.shared.data.BasicItem;
 import com.ironalloygames.ds2cc.shared.data.Item;
+import com.ironalloygames.ds2cc.shared.data.ItemKey;
 
 public class ItemDataService {
 	static ItemDataService singleton;
@@ -26,12 +26,12 @@ public class ItemDataService {
 	private final PersistenceManagerFactory pmfInstance = JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
 	@SuppressWarnings("unchecked")
-	public List<BasicItem> getAllBasicItems() {
+	public List<ItemKey> getAllItemKeys() {
 		PersistenceManager pm = pmfInstance.getPersistenceManager();
 
 		Query q = pm.newQuery(Item.class);
 
-		ArrayList<BasicItem> retItems = new ArrayList<>();
+		ArrayList<ItemKey> retItems = new ArrayList<>();
 
 		for (Item itm : (List<Item>) q.execute()) {
 			retItems.add(itm.copyAsBasicItem());
@@ -40,12 +40,12 @@ public class ItemDataService {
 		return retItems;
 	}
 
-	public Item readItem(BasicItem key)
+	public Item readItem(ItemKey key)
 	{
 		try {
 			PersistenceManager pm = pmfInstance.getPersistenceManager();
 
-			return (Item) pm.getObjectById(KeyFactory.createKey(BasicItem.class.getSimpleName(), key.getName()));
+			return (Item) pm.getObjectById(KeyFactory.createKey(Item.class.getSimpleName(), key.getName()));
 		} catch (Exception ex) {
 			Logger.getGlobal().warning(ex.toString());
 			return null;
