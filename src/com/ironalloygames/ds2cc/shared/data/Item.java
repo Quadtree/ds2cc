@@ -84,10 +84,7 @@ public class Item implements Serializable {
 	 * @return
 	 */
 	public String getImageSrc() {
-		if (this.getEncodedImageData() != null && this.getEncodedImageData().length() > 0)
-			return "data:image/png;base64," + this.getEncodedImageData();
-		else
-			return "";
+		return "/itemimage?itemName=" + this.getName();
 	}
 
 	public void filterInternalData() {

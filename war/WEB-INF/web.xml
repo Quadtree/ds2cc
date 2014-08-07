@@ -9,10 +9,20 @@
 		<servlet-name>TSVImporterServlet</servlet-name>
 		<servlet-class>com.ironalloygames.ds2cc.server.tsvimporter.TSVImporterServlet</servlet-class>
 	</servlet>
-
+	
 	<servlet-mapping>
 		<servlet-name>TSVImporterServlet</servlet-name>
 		<url-pattern>/importer/tsv</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>ImageServlet</servlet-name>
+		<servlet-class>com.ironalloygames.ds2cc.server.ImageServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>ImageServlet</servlet-name>
+		<url-pattern>/itemimage</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -29,6 +39,11 @@
 		<servlet-name>DataServiceServlet</servlet-name>
 		<servlet-class>com.ironalloygames.ds2cc.server.DataServiceImpl</servlet-class>
 	</servlet>
+	
+	<servlet>
+		<servlet-name>EditorDataServiceServlet</servlet-name>
+		<servlet-class>com.ironalloygames.ds2cc.server.editor.DataServiceImpl</servlet-class>
+	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>DataServiceServlet</servlet-name>
@@ -36,13 +51,13 @@
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>DataServiceServlet</servlet-name>
+		<servlet-name>EditorDataServiceServlet</servlet-name>
 		<url-pattern>/ds2cceditor/data</url-pattern>
 	</servlet-mapping>
 
 	<!-- Default page to serve -->
 	<welcome-file-list>
-		<welcome-file>Ds2cc.html</welcome-file>
+		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 
 	<security-constraint>
